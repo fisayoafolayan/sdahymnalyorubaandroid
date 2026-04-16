@@ -49,8 +49,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -238,7 +238,8 @@ private fun HymnContent(
     context: android.content.Context,
 ) {
     val scrollState = rememberScrollState()
-    val isLandscape = LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+    val containerSize = LocalWindowInfo.current.containerSize
+    val isLandscape = containerSize.width > containerSize.height
 
     Box(
         modifier = Modifier.fillMaxSize(),
