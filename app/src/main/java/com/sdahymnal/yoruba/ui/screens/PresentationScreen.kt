@@ -177,8 +177,8 @@ fun PresentationScreen(
         CornerDecoration(modifier = Modifier.align(Alignment.BottomStart).offset(16.dp, (-70).dp), bottomLeft = true)
         CornerDecoration(modifier = Modifier.align(Alignment.BottomEnd).offset((-16).dp, (-70).dp), bottomRight = true)
 
-        // Hint text (only on title slide)
-        if (currentIndex == 0) {
+        // Hint text (title + first verse slide)
+        if (currentIndex <= 1) {
             val containerSize = LocalWindowInfo.current.containerSize
             val isPortrait = containerSize.height > containerSize.width
 

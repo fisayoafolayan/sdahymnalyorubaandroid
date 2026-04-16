@@ -25,6 +25,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.DesktopWindows
@@ -224,6 +226,28 @@ fun HymnDetailScreen(
                 onShare = onShare,
                 context = context,
             )
+
+            // Swipe affordance chevrons
+            if (hasPrevious) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .size(28.dp),
+                )
+            }
+            if (hasNext) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .size(28.dp),
+                )
+            }
         }
     }
 }
