@@ -101,8 +101,10 @@ fun HymnNavGraph(
         is HymnLoadState.Ready -> {
             val hymns = state.hymns
 
-            // Restore last hymn on first load
+            // Restore last hymn on first load (skip if a deep link is pending)
+            val pendingDeepLink by viewModel.pendingDeepLink.collectAsState()
             LaunchedEffect(Unit) {
+                if (pendingDeepLink > 0) return@LaunchedEffect
                 val lastHymn = viewModel.lastHymn
                 if (lastHymn > 0 && viewModel.getByNumber(lastHymn) != null) {
                     viewModel.selectHymn(lastHymn)
@@ -111,7 +113,6 @@ fun HymnNavGraph(
             }
 
             // Navigate on deep link (works for both initial launch and onNewIntent)
-            val pendingDeepLink by viewModel.pendingDeepLink.collectAsState()
             LaunchedEffect(pendingDeepLink) {
                 if (pendingDeepLink > 0 && viewModel.getByNumber(pendingDeepLink) != null) {
                     viewModel.selectHymn(pendingDeepLink)
