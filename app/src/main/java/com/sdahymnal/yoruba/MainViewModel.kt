@@ -151,6 +151,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getByNumber(number: Int): Hymn? = repository.getByNumber(number)
 
+    // --- Number pad ---
+    private val _showNumberPad = MutableStateFlow(false)
+    val showNumberPad: StateFlow<Boolean> = _showNumberPad
+
+    fun openNumberPad() { _showNumberPad.value = true }
+    fun closeNumberPad() { _showNumberPad.value = false }
+
     // --- Deep links ---
     private val _pendingDeepLink = MutableStateFlow(-1)
     val pendingDeepLink: StateFlow<Int> = _pendingDeepLink

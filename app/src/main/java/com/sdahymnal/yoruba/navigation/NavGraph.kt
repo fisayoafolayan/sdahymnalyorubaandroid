@@ -76,7 +76,7 @@ fun HymnNavGraph(
     val isSearching by viewModel.isSearching.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
     var selectedTab by rememberSaveable { mutableStateOf(BottomTab.Hymns) }
-    var showNumberPad by rememberSaveable { mutableStateOf(false) }
+    val showNumberPad by viewModel.showNumberPad.collectAsState()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -155,10 +155,10 @@ fun HymnNavGraph(
             // Number pad dialog
             if (showNumberPad) {
                 NumberPadDialog(
-                    onDismiss = { showNumberPad = false },
+                    onDismiss = { viewModel.closeNumberPad() },
                     getHymnTitle = { viewModel.getByNumber(it)?.title },
                     onGoToHymn = { number ->
-                        showNumberPad = false
+                        viewModel.closeNumberPad()
                         viewModel.trackNumpad(number)
                         viewModel.selectHymn(number)
                         navController.navigate(Routes.hymnDetail(number))
@@ -349,7 +349,7 @@ fun HymnNavGraph(
               // Floating keypad button
               if (showBottomBar) {
                   FloatingActionButton(
-                      onClick = { showNumberPad = true },
+                      onClick = { viewModel.openNumberPad() },
                       modifier = Modifier
                           .align(Alignment.BottomEnd)
                           .padding(end = 16.dp, bottom = 108.dp)
