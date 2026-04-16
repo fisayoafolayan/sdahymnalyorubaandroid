@@ -73,7 +73,7 @@ fun FavoritesScreen(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.FavoriteBorder,
-                    contentDescription = null,
+                    contentDescription = "No favorites",
                     modifier = Modifier.size(48.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
                 )

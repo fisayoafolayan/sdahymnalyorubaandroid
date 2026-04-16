@@ -195,7 +195,7 @@ fun CategoriesScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.GridView,
-                        contentDescription = null,
+                        contentDescription = "No categories",
                         modifier = Modifier.size(48.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
                     )
@@ -257,7 +257,7 @@ private fun CategorySearchBar(
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = null,
+                contentDescription = "Search",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
             )
         },

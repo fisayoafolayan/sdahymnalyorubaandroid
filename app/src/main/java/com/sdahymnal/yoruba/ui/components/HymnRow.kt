@@ -94,7 +94,7 @@ fun HymnRow(
                 } else {
                     Icon(
                         imageVector = Icons.Default.Favorite,
-                        contentDescription = null,
+                        contentDescription = "Favorite",
                         tint = com.sdahymnal.yoruba.ui.theme.FavoriteHeart.copy(alpha = 0.6f),
                         modifier = Modifier.size(14.dp),
                     )

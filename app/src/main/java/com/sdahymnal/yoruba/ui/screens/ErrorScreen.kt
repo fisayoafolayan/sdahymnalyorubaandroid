@@ -38,7 +38,7 @@ fun ErrorScreen(
         ) {
             Icon(
                 imageVector = Icons.Default.WifiOff,
-                contentDescription = null,
+                contentDescription = "Connection error",
                 modifier = Modifier.size(64.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
             )

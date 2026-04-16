@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.material3.Icon
+import androidx.compose.ui.res.stringResource
+import com.sdahymnal.yoruba.R
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,7 +53,7 @@ fun BrandHeader(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_book_brand),
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.app_name),
                         tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
                         modifier = Modifier.size(26.dp),
                     )

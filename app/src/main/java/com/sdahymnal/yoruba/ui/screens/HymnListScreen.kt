@@ -150,7 +150,7 @@ fun HymnListScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.SearchOff,
-                            contentDescription = null,
+                            contentDescription = "No results",
                             modifier = Modifier.size(48.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
                         )
