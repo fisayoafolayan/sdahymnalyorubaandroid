@@ -3,6 +3,8 @@ package com.sdahymnal.yoruba.data
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -28,11 +30,25 @@ object Analytics {
     private val json = "application/json".toMediaType()
 
     fun trackPageView(url: String) {
-        send("""{"type":"event","payload":{"website":"$WEBSITE_ID","hostname":"$HOSTNAME","url":"$url","language":"yo"}}""")
+        send(buildPayload(url = url))
     }
 
     fun trackEvent(name: String) {
-        send("""{"type":"event","payload":{"website":"$WEBSITE_ID","hostname":"$HOSTNAME","url":"/","name":"android_$name","language":"yo"}}""")
+        send(buildPayload(url = "/", name = "android_$name"))
+    }
+
+    private fun buildPayload(url: String, name: String? = null): String {
+        val payload = buildMap {
+            put("website", JsonPrimitive(WEBSITE_ID))
+            put("hostname", JsonPrimitive(HOSTNAME))
+            put("url", JsonPrimitive(url))
+            put("language", JsonPrimitive("yo"))
+            if (name != null) put("name", JsonPrimitive(name))
+        }
+        return JsonObject(mapOf(
+            "type" to JsonPrimitive("event"),
+            "payload" to JsonObject(payload),
+        )).toString()
     }
 
     private fun send(body: String) {
