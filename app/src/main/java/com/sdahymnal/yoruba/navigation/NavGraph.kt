@@ -179,10 +179,9 @@ fun HymnNavGraph(
                 ) {
                     composable(Routes.HYMN_LIST) {
                         HymnListScreen(
-                            hymns = hymns,
+                            displayedHymns = searchResults,
                             selectedHymnNumber = selectedHymnNumber,
                             searchQuery = searchQuery,
-                            searchResults = searchResults,
                             isSearching = isSearching,
                             onSearchQueryChange = { viewModel.updateSearchQuery(it) },
                             onHymnClick = { hymn ->

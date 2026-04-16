@@ -47,10 +47,9 @@ import com.sdahymnal.yoruba.ui.components.HymnSearchBar
 
 @Composable
 fun HymnListScreen(
-    hymns: List<Hymn>,
+    displayedHymns: List<Hymn>,
     selectedHymnNumber: Int?,
     searchQuery: String,
-    searchResults: List<Hymn>,
     isSearching: Boolean = false,
     onSearchQueryChange: (String) -> Unit,
     onHymnClick: (Hymn) -> Unit,
@@ -58,7 +57,6 @@ fun HymnListScreen(
     themeMode: String = "system",
     onSetTheme: (String) -> Unit = {},
 ) {
-    val displayedHymns = if (searchQuery.isBlank()) hymns else searchResults
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
 
