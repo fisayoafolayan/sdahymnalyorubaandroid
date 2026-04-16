@@ -117,6 +117,6 @@ class HymnListScreenTest {
         }
 
         composeTestRule.onNodeWithText("Oluwa Oba").assertIsDisplayed()
-        composeTestRule.onNodeWithText("1 hymns").assertIsDisplayed()
+        composeTestRule.onNodeWithText("1 hymn").assertIsDisplayed()
     }
 }

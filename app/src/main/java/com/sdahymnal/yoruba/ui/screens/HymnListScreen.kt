@@ -22,7 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.unit.dp
 import com.sdahymnal.yoruba.R
 import com.sdahymnal.yoruba.data.Hymn
@@ -96,7 +96,7 @@ fun HymnListScreen(
                 )
 
                 Text(
-                    text = stringResource(R.string.hymn_count, displayedHymns.size),
+                    text = pluralStringResource(R.plurals.hymn_count, displayedHymns.size, displayedHymns.size),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),

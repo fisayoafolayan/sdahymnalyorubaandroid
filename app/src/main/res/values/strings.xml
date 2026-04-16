@@ -2,7 +2,10 @@
 <resources>
     <string name="app_name">SDA Hymnal Yorùbá</string>
     <string name="search_placeholder">Search by title, number or lyrics\u2026</string>
-    <string name="hymn_count">%d hymns</string>
+    <plurals name="hymn_count">
+        <item quantity="one">%d hymn</item>
+        <item quantity="other">%d hymns</item>
+    </plurals>
 
     <!-- Network errors -->
     <string name="error_no_internet">No internet connection. Please check your network and try again.</string>
