@@ -47,7 +47,10 @@ class SearchEdgeCasesTest {
 
         val index = hymnList.map { hymn ->
             val lyrics = hymn.lyrics.joinToString(" ") { block ->
-                block.textLines.joinToString(" ")
+                when (block.type) {
+                    "call_response" -> block.callResponseLines.joinToString(" ") { it.text }
+                    else -> block.textLines.joinToString(" ")
+                }
             }
             SearchEntry(
                 hymn = hymn,

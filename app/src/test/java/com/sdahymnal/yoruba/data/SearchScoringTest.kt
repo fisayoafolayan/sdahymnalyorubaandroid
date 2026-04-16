@@ -40,6 +40,28 @@ class SearchScoringTest {
         return json.decodeFromString<Hymn>(jsonStr)
     }
 
+    private fun makeCallResponseHymn(
+        number: Int,
+        title: String,
+        englishTitle: String = "English $number",
+        lines: List<Pair<String, String>>, // part to text
+    ): Hymn {
+        val linesJson = lines.joinToString(",") { (part, text) ->
+            """{"part":"$part","text":"$text"}"""
+        }
+        val jsonStr = """
+        {
+            "index": "${number.toString().padStart(3, '0')}",
+            "number": $number,
+            "title": "$title",
+            "english_title": "$englishTitle",
+            "references": {},
+            "lyrics": [{"type":"call_response","index":1,"lines":[$linesJson]}]
+        }
+        """
+        return json.decodeFromString<Hymn>(jsonStr)
+    }
+
     // Simulate search logic from HymnRepository
     private fun search(query: String, hymnList: List<Hymn>): List<Hymn> {
         val normalised = HymnRepository.removeDiacritics(query.trim())
@@ -58,7 +80,10 @@ class SearchScoringTest {
 
         val index = hymnList.map { hymn ->
             val lyrics = hymn.lyrics.joinToString(" ") { block ->
-                block.textLines.joinToString(" ")
+                when (block.type) {
+                    "call_response" -> block.callResponseLines.joinToString(" ") { it.text }
+                    else -> block.textLines.joinToString(" ")
+                }
             }
             val refs = hymn.references.entries.joinToString(" ") { "${it.key} ${it.value}" }
             SearchEntry(
@@ -171,5 +196,20 @@ class SearchScoringTest {
         val results = search("Oluwa", testHymns)
         assertEquals(10, results[0].number) // same score, lower number first
         assertEquals(50, results[1].number)
+    }
+
+    @Test
+    fun `call_response lyrics are searchable`() {
+        val crHymn = makeCallResponseHymn(
+            number = 200,
+            title = "Ìpè Olúwa",
+            lines = listOf(
+                "leader" to "Ẹ gbọ́ ohùn Olúwa",
+                "congregation" to "A gbọ́ ọ Olúwa",
+            ),
+        )
+        val results = search("ohun oluwa", listOf(crHymn))
+        assertEquals(1, results.size)
+        assertEquals(200, results[0].number)
     }
 }
