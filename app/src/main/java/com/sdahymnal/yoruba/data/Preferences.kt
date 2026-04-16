@@ -31,7 +31,7 @@ class Preferences(context: Context) {
     /** Favorite hymn numbers stored as comma-separated string */
     var favorites: Set<Int>
         get() {
-            val raw = prefs.getString(KEY_FAVORITES, "") ?: ""
+            val raw = prefs.getString(KEY_FAVORITES, "")!!
             if (raw.isBlank()) return emptySet()
             return raw.split(",").mapNotNull { it.trim().toIntOrNull() }.toSet()
         }
