@@ -42,6 +42,7 @@ Thank you for your interest in contributing! This guide will help you get starte
 - Keep business logic in `MainViewModel`, not in composables
 - Use `MaterialTheme` colors and typography - avoid hardcoded values
 - All colors must be defined in `Color.kt` - never inline `Color(0x...)`
+- All user-facing strings must be in `strings.xml` - never hardcode text in composables
 - Match the web app's design language (colors, spacing, fonts)
 - Pre-compile regexes as companion object vals, not inline
 - No unused imports - clean up before committing
@@ -49,11 +50,19 @@ Thank you for your interest in contributing! This guide will help you get starte
 
 ### Analytics
 
-All user interactions should be tracked via `Analytics.trackEvent()`. Events are prefixed with `android_` automatically. Add tracking for any new user action:
+All user interactions should be tracked through the **ViewModel** - never call `Analytics` directly from composables. The ViewModel provides typed methods for common events and a generic `trackEvent()` for others:
 
 ```kotlin
-Analytics.trackEvent("feature_name")  // becomes "android_feature_name" in Umami
+// In ViewModel
+fun trackShare(hymnNumber: Int) {
+    Analytics.trackEvent("share_$hymnNumber")
+}
+
+// In NavGraph / composable callback
+onShare = { viewModel.trackShare(hymn.number) }
 ```
+
+Page views are tracked automatically via `viewModel.trackPageView()` in the `LaunchedEffect(currentRoute)` block in NavGraph. Events are prefixed with `android_` automatically.
 
 ### Commit Messages
 
@@ -69,26 +78,27 @@ docs: update setup instructions
 ## Architecture Overview
 
 ```
-MainActivity               - Entry point, edge-to-edge, ViewModel creation
+MainActivity               - Entry point, edge-to-edge, deep link handling
   |
 MainViewModel              - Single source of truth for all app state
   |
-  +-- HymnRepository       - Network (OkHttp + ETag), file cache, search engine
+  +-- HymnRepository       - Network (shared OkHttpClient + ETag), atomic file cache, search engine
   |     +-- Search index built once at load time (normalized fields)
+  |     +-- Number lookup map for O(1) getByNumber()
   |     +-- Scoring: number=100, prefix=90, title=80, english=70, refs=60, lyrics=40
   |
-  +-- Preferences           - SharedPreferences (theme, fonts, favorites, ETag)
-  +-- Analytics             - Umami HTTP client (fire-and-forget, IO dispatcher)
+  +-- Preferences           - SharedPreferences (single instance, shared with Repository)
+  +-- Analytics             - Umami HTTP client (configurable via BuildConfig, JSON-safe payloads)
   |
-NavGraph                   - Routes screens, bottom nav, number pad FAB, animated transitions
+NavGraph                   - Routes screens, bottom nav, number pad FAB, page view tracking
   |
-  +-- HymnListScreen        - Branded header, debounced search with highlighting, animated list
-  +-- HymnDetailScreen      - Lyrics with swipe animation, favorites, share
-  +-- PresentationScreen    - Full-screen projection, keeps screen on
-  +-- CategoriesScreen      - 2-column grid with icons
-  +-- CategoryDetailScreen  - Hymns within a category
-  +-- FavoritesScreen       - Saved hymns with heart toggle
-  +-- MoreScreen            - Settings, about, share/rate
+  +-- HymnListScreen        - Branded header, debounced search with highlighting, empty state
+  +-- HymnDetailScreen      - Lyrics with swipe feedback, top bar favorite, share
+  +-- PresentationScreen    - Full-screen projection with staggered line reveal, font controls
+  +-- CategoriesScreen      - 2-column searchable grid with count labels
+  +-- CategoryDetailScreen  - Hymns within a category with count
+  +-- FavoritesScreen       - Saved hymns with undo snackbar on removal
+  +-- MoreScreen            - Settings with theme dropdown, font preview, about, share/rate
   +-- LoadingScreen         - Shimmer skeleton
   +-- ErrorScreen           - Offline error with retry
 ```
@@ -96,10 +106,13 @@ NavGraph                   - Routes screens, bottom nav, number pad FAB, animate
 **Key patterns:**
 - State flows down from `MainViewModel` via `StateFlow` + `collectAsState()`
 - Events flow up via callback lambdas (e.g., `onHymnClick`, `onToggleFavorite`)
-- No direct `Preferences`, `Repository`, or `Analytics` access from composables (except share click in HymnDetailScreen)
-- Search uses 150ms debounce via `Flow.debounce()` in ViewModel
-- Network uses ETag headers - `If-None-Match` returns 304 when data unchanged
-- Configuration changes (rotation) handled without activity recreation via manifest `configChanges`
+- No direct `Preferences`, `Repository`, or `Analytics` access from composables
+- All analytics routed through ViewModel methods
+- Search uses 150ms debounce via `Flow.debounce()` combined with `repository.state`
+- Network uses shared `HttpClient.base` with ETag headers
+- Atomic cache writes (temp file + rename) protect offline access
+- Tab state derived from navigation via `LaunchedEffect(currentRoute)`, not composition side effects
+- Deep links handled reactively via `pendingDeepLink` StateFlow
 - `BrandHeader` component shared across Hymns, Favorites, Categories, More screens
 - `FavoriteHeart` color defined once in `Color.kt`, referenced everywhere
 
@@ -109,6 +122,7 @@ NavGraph                   - Routes screens, bottom nav, number pad FAB, animate
 
 - **Unit tests:** right-click `app/src/test` > **Run Tests**
 - **UI tests:** right-click `app/src/androidTest` > **Run Tests** (requires emulator or device)
+- **CI:** unit tests and instrumented tests run on every push/PR via GitHub Actions
 
 ### Test Coverage
 
@@ -116,12 +130,12 @@ NavGraph                   - Routes screens, bottom nav, number pad FAB, animate
 |---|---|---|---|
 | `RemoveDiacriticsTest.kt` | Unit | 6 | Diacritics, punctuation, casing, edge cases |
 | `HymnTest.kt` | Unit | 5 | JSON parsing: verses, chorus, call-response |
-| `SearchScoringTest.kt` | Unit | 10 | Ranking, priority, diacritics, sorting |
+| `SearchScoringTest.kt` | Unit | 11 | Ranking, priority, diacritics, call-response, sorting |
 | `SearchEdgeCasesTest.kt` | Unit | 10 | Single char, spaces, punctuation, long query |
 | `HymnEdgeCasesTest.kt` | Unit | 8 | Empty lyrics, mixed blocks, unicode, sorting |
-| `ETagCachingTest.kt` | Unit | 6 | Store, retrieve, 304, null handling |
+| `ETagCachingTest.kt` | Unit | 10 | Store, retrieve, 304, null handling, atomic writes |
 | `PreferencesTest.kt` | Unit | 4 | Font sizes, favorites serialization |
-| `ViewModelLogicTest.kt` | Unit | 14 | Theme, fonts, favorites, deep link priority |
+| `ViewModelLogicTest.kt` | Unit | 20 | Flow patterns, deep links, search combine, hymn lookup |
 | `HymnListScreenTest.kt` | UI | 5 | Display, count, search, click, header |
 | `HymnDetailScreenTest.kt` | UI | 5 | Title, English, number, lyrics, references |
 | `FavoritesScreenTest.kt` | UI | 5 | Empty state, list, count, header |
@@ -134,6 +148,7 @@ NavGraph                   - Routes screens, bottom nav, number pad FAB, animate
 - Place in `app/src/test/java/com/sdahymnal/yoruba/`
 - Use JUnit 4 (`@Test`, `assertEquals`)
 - Focus on business logic (search, data parsing, preferences)
+- For flow-based patterns, use `kotlinx-coroutines-test` (`runTest`, `MutableStateFlow`)
 
 **UI tests:**
 - Place in `app/src/androidTest/java/com/sdahymnal/yoruba/`
@@ -145,10 +160,10 @@ NavGraph                   - Routes screens, bottom nav, number pad FAB, animate
 
 ### Good First Issues
 
-- Implement the **More** tab About section with app logo and description
 - Add **recently viewed** hymns list
-- Improve **number pad** with hymn title preview as you type
+- Add **search history** with recent queries
 - Add unit tests for `HymnCategories` data
+- Add UI tests for `PresentationScreen` and `NumberPadDialog`
 
 ### Feature Ideas
 
@@ -180,7 +195,10 @@ Hymn content is managed through the web app at [sdahymnalyoruba.com](https://sda
 - [ ] Tested in portrait and landscape
 - [ ] No unused imports or dead code
 - [ ] No hardcoded colors (use Color.kt)
-- [ ] Analytics tracking added for new user actions
+- [ ] No hardcoded strings (use strings.xml)
+- [ ] Analytics tracking added for new user actions (through ViewModel)
+- [ ] Content descriptions on functional icons
+- [ ] Touch targets at least 48dp
 - [ ] Follows existing code patterns
 
 ## Reporting Bugs
