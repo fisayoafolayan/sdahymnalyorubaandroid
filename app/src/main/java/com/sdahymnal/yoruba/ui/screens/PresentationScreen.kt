@@ -42,6 +42,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
@@ -286,18 +288,29 @@ private fun CornerDecoration(
     Box(
         modifier = modifier
             .size(24.dp)
-            .then(
+            .drawBehind {
+                val stroke = 1.dp.toPx()
+                val w = size.width
+                val h = size.height
                 when {
-                    topLeft -> Modifier
-                        .border(width = 1.dp, color = borderColor)
-                        .padding(0.dp)
-                        // Only show top and left borders
-                    topRight -> Modifier.border(width = 1.dp, color = borderColor)
-                    bottomLeft -> Modifier.border(width = 1.dp, color = borderColor)
-                    bottomRight -> Modifier.border(width = 1.dp, color = borderColor)
-                    else -> Modifier
+                    topLeft -> {
+                        drawLine(borderColor, Offset(0f, 0f), Offset(w, 0f), stroke)
+                        drawLine(borderColor, Offset(0f, 0f), Offset(0f, h), stroke)
+                    }
+                    topRight -> {
+                        drawLine(borderColor, Offset(0f, 0f), Offset(w, 0f), stroke)
+                        drawLine(borderColor, Offset(w, 0f), Offset(w, h), stroke)
+                    }
+                    bottomLeft -> {
+                        drawLine(borderColor, Offset(0f, h), Offset(w, h), stroke)
+                        drawLine(borderColor, Offset(0f, 0f), Offset(0f, h), stroke)
+                    }
+                    bottomRight -> {
+                        drawLine(borderColor, Offset(0f, h), Offset(w, h), stroke)
+                        drawLine(borderColor, Offset(w, 0f), Offset(w, h), stroke)
+                    }
                 }
-            )
+            }
     )
 }
 
