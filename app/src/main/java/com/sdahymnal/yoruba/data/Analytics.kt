@@ -54,6 +54,7 @@ object Analytics {
     }
 
     private fun send(body: String) {
+        if (!ENDPOINT.startsWith("https://")) return
         scope.launch {
             try {
                 val request = Request.Builder()
