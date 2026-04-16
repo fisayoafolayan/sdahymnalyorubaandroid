@@ -2,6 +2,7 @@ package com.sdahymnal.yoruba.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 
 class Preferences(context: Context) {
 
@@ -11,22 +12,22 @@ class Preferences(context: Context) {
     /** Theme mode: "light", "dark", or "system" */
     var themeMode: String
         get() = prefs.getString(KEY_THEME, "system") ?: "system"
-        set(value) = prefs.edit().putString(KEY_THEME, value).apply()
+        set(value) = prefs.edit { putString(KEY_THEME, value) }
 
     /** Reading font size multiplier: 1.0, 1.2, or 1.45 */
     var readingFontSize: Float
         get() = prefs.getFloat(KEY_READ_FZ, 1.0f)
-        set(value) = prefs.edit().putFloat(KEY_READ_FZ, value).apply()
+        set(value) = prefs.edit { putFloat(KEY_READ_FZ, value) }
 
     /** Presentation font size multiplier: 0.4 - 2.5 */
     var presentationFontSize: Float
         get() = prefs.getFloat(KEY_PRES_FZ, 1.0f)
-        set(value) = prefs.edit().putFloat(KEY_PRES_FZ, value).apply()
+        set(value) = prefs.edit { putFloat(KEY_PRES_FZ, value) }
 
     /** Last viewed hymn number, -1 if none */
     var lastHymn: Int
         get() = prefs.getInt(KEY_LAST_HYMN, -1)
-        set(value) = prefs.edit().putInt(KEY_LAST_HYMN, value).apply()
+        set(value) = prefs.edit { putInt(KEY_LAST_HYMN, value) }
 
     /** Favorite hymn numbers stored as comma-separated string */
     var favorites: Set<Int>
@@ -35,7 +36,7 @@ class Preferences(context: Context) {
             if (raw.isBlank()) return emptySet()
             return raw.split(",").mapNotNull { it.trim().toIntOrNull() }.toSet()
         }
-        set(value) = prefs.edit().putString(KEY_FAVORITES, value.joinToString(",")).apply()
+        set(value) = prefs.edit { putString(KEY_FAVORITES, value.joinToString(",")) }
 
     fun toggleFavorite(hymnNumber: Int): Set<Int> {
         val current = favorites.toMutableSet()
@@ -47,7 +48,7 @@ class Preferences(context: Context) {
     /** Stored ETag from the hymns.json server response */
     var hymnsEtag: String?
         get() = prefs.getString(KEY_ETAG, null)
-        set(value) = prefs.edit().putString(KEY_ETAG, value).apply()
+        set(value) = prefs.edit { putString(KEY_ETAG, value) }
 
     companion object {
         private const val KEY_THEME = "theme"
