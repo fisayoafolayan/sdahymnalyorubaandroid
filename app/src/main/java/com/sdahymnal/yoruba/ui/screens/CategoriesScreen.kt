@@ -178,6 +178,13 @@ fun CategoriesScreen(
                 onQueryChange = { searchQuery = it },
             )
 
+            Text(
+                text = pluralStringResource(R.plurals.category_count, filteredCategories.size, filteredCategories.size),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+            )
+
             if (filteredCategories.isEmpty()) {
                 Column(
                     modifier = Modifier

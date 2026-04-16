@@ -6,6 +6,10 @@
         <item quantity="one">%d hymn</item>
         <item quantity="other">%d hymns</item>
     </plurals>
+    <plurals name="category_count">
+        <item quantity="one">%d category</item>
+        <item quantity="other">%d categories</item>
+    </plurals>
 
     <!-- Network errors -->
     <string name="error_no_internet">No internet connection. Please check your network and try again.</string>
