@@ -28,7 +28,7 @@ object Analytics {
         .readTimeout(5, TimeUnit.SECONDS)
         .build()
 
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(kotlinx.coroutines.SupervisorJob() + Dispatchers.IO)
     private val json = "application/json".toMediaType()
 
     fun trackPageView(url: String) {
