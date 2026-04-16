@@ -88,18 +88,18 @@ class ErrorEdgeCasesTest {
     // --- Search with empty/missing data ---
 
     @Test
-    fun `search on empty index returns empty`() {
-        val normalised = HymnRepository.removeDiacritics("test query")
-        assertTrue(normalised.isNotEmpty())
-        // Simulates searching with no hymns loaded
-        val results = emptyList<Hymn>()
-        assertTrue(results.isEmpty())
+    fun `removeDiacritics on empty string returns empty`() {
+        assertEquals("", HymnRepository.removeDiacritics(""))
     }
 
     @Test
-    fun `getByNumber on empty map returns null`() {
-        val map = emptyMap<Int, Hymn>()
-        assertNull(map[42])
+    fun `removeDiacritics on whitespace-only returns whitespace`() {
+        assertEquals("   ", HymnRepository.removeDiacritics("   "))
+    }
+
+    @Test
+    fun `removeDiacritics on punctuation-only returns empty`() {
+        assertEquals("", HymnRepository.removeDiacritics("!@#\$%"))
     }
 
     // --- Malformed hymn data ---

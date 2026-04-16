@@ -1,7 +1,6 @@
 package com.sdahymnal.yoruba.ui.screens
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +31,7 @@ import androidx.compose.material.icons.outlined.StarRate
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.ui.unit.DpOffset
+import androidx.core.net.toUri
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -201,6 +201,8 @@ fun MoreScreen(
 
             // SHARE & RATE
             SectionHeader(stringResource(R.string.section_spread))
+            val shareAppText = stringResource(R.string.share_app_text)
+            val shareAppChooser = stringResource(R.string.share_app_chooser)
             SettingsRow(
                 icon = Icons.Outlined.Share,
                 title = stringResource(R.string.setting_share_app),
@@ -209,9 +211,9 @@ fun MoreScreen(
                     onTrackEvent("share_app")
                     val shareIntent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
-                        putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_app_text))
+                        putExtra(Intent.EXTRA_TEXT, shareAppText)
                     }
-                    context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_app_chooser)))
+                    context.startActivity(Intent.createChooser(shareIntent, shareAppChooser))
                 },
             )
             SettingsRow(
@@ -221,9 +223,9 @@ fun MoreScreen(
                 onClick = {
                     onTrackEvent("rate_app")
                     try {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${context.packageName}")))
+                        context.startActivity(Intent(Intent.ACTION_VIEW, "market://details?id=${context.packageName}".toUri()))
                     } catch (_: Exception) {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${context.packageName}")))
+                        context.startActivity(Intent(Intent.ACTION_VIEW, "https://play.google.com/store/apps/details?id=${context.packageName}".toUri()))
                     }
                 },
             )
@@ -235,7 +237,7 @@ fun MoreScreen(
                 title = stringResource(R.string.setting_website),
                 subtitle = "sdahymnalyoruba.com",
                 onClick = {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://sdahymnalyoruba.com")))
+                    context.startActivity(Intent(Intent.ACTION_VIEW, "https://sdahymnalyoruba.com".toUri()))
                 },
             )
             SettingsRow(
@@ -243,7 +245,7 @@ fun MoreScreen(
                 title = stringResource(R.string.setting_contact),
                 subtitle = "support@sdahymnalyoruba.com",
                 onClick = {
-                    context.startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:support@sdahymnalyoruba.com")))
+                    context.startActivity(Intent(Intent.ACTION_SENDTO, "mailto:support@sdahymnalyoruba.com".toUri()))
                 },
             )
             SettingsRow(
@@ -251,7 +253,7 @@ fun MoreScreen(
                 title = stringResource(R.string.setting_github),
                 subtitle = "fisayoafolayan/sdahymnalyorubaandroid",
                 onClick = {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/fisayoafolayan/sdahymnalyorubaandroid")))
+                    context.startActivity(Intent(Intent.ACTION_VIEW, "https://github.com/fisayoafolayan/sdahymnalyorubaandroid".toUri()))
                 },
             )
             SettingsRow(
@@ -265,7 +267,7 @@ fun MoreScreen(
                 title = stringResource(R.string.setting_privacy),
                 subtitle = "sdahymnalyoruba.com/privacy",
                 onClick = {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://sdahymnalyoruba.com/privacy")))
+                    context.startActivity(Intent(Intent.ACTION_VIEW, "https://sdahymnalyoruba.com/privacy".toUri()))
                 },
             )
 
