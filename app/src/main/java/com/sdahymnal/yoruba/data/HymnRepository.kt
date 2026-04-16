@@ -65,7 +65,8 @@ class HymnRepository(private val context: Context, private val preferences: Pref
         }
     }
 
-    /** Scored search matching the web app's algorithm. */
+    /** Scored search matching the web app's algorithm.
+     *  Tries exact substring first, then falls back to all-words matching. */
     fun search(query: String): List<Hymn> {
         if (query.isBlank()) return hymns
 
@@ -73,6 +74,7 @@ class HymnRepository(private val context: Context, private val preferences: Pref
         if (normalised.isEmpty()) return hymns
 
         val isDigits = normalised.all { it.isDigit() }
+        val words = normalised.split(' ').filter { it.isNotEmpty() }
 
         // Snapshot the index once so a concurrent swap can't affect this search
         val entries = index.searchEntries
@@ -86,16 +88,36 @@ class HymnRepository(private val context: Context, private val preferences: Pref
             } else if (isDigits && entry.number.startsWith(normalised)) {
                 score = 90
             }
-            if (entry.title.contains(normalised)) score = maxOf(score, 80)
-            if (entry.englishTitle.contains(normalised)) score = maxOf(score, 70)
-            if (entry.refs.contains(normalised)) score = maxOf(score, 60)
-            if (score == 0 && entry.lyrics.contains(normalised)) score = 40
+            val titleQ = entry.title.matchQuality(normalised, words)
+            if (titleQ == 2) score = maxOf(score, 80)
+            else if (titleQ == 1) score = maxOf(score, 75)
+
+            val engQ = entry.englishTitle.matchQuality(normalised, words)
+            if (engQ == 2) score = maxOf(score, 70)
+            else if (engQ == 1) score = maxOf(score, 65)
+
+            val refsQ = entry.refs.matchQuality(normalised, words)
+            if (refsQ == 2) score = maxOf(score, 60)
+            else if (refsQ == 1) score = maxOf(score, 55)
+
+            if (score == 0) {
+                val lyricsQ = entry.lyrics.matchQuality(normalised, words)
+                if (lyricsQ == 2) score = 40
+                else if (lyricsQ == 1) score = 35
+            }
 
             if (score > 0) results.add(entry.hymn to score)
         }
 
         results.sortWith(compareByDescending<Pair<Hymn, Int>> { it.second }.thenBy { it.first.number })
         return results.map { it.first }
+    }
+
+    /** Match quality: 2 = exact substring, 1 = all words present, 0 = no match. */
+    private fun String.matchQuality(full: String, words: List<String>): Int {
+        if (contains(full)) return 2
+        if (words.size > 1 && words.all { contains(it) }) return 1
+        return 0
     }
 
     fun getByNumber(number: Int): Hymn? = index.byNumber[number]

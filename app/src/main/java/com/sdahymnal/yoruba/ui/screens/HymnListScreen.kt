@@ -60,6 +60,13 @@ fun HymnListScreen(
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
 
+    // Scroll to top when search query changes
+    LaunchedEffect(searchQuery) {
+        if (searchQuery.isNotBlank()) {
+            listState.scrollToItem(0)
+        }
+    }
+
     // Scroll to selected hymn when returning from detail
     LaunchedEffect(selectedHymnNumber) {
         if (selectedHymnNumber != null && selectedHymnNumber > 0) {
@@ -185,6 +192,9 @@ fun HymnListScreen(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                     )
 
+                    val highlightedNumber = if (searchQuery.isNotBlank())
+                        displayedHymns.firstOrNull()?.number else selectedHymnNumber
+
                     LazyColumn(
                         state = listState,
                         modifier = Modifier.fillMaxSize(),
@@ -195,7 +205,7 @@ fun HymnListScreen(
                         ) { hymn ->
                             HymnRow(
                                 hymn = hymn,
-                                isSelected = hymn.number == selectedHymnNumber,
+                                isSelected = hymn.number == highlightedNumber,
                                 isFavorite = hymn.number in favorites,
                                 searchQuery = searchQuery,
                                 onClick = {
