@@ -17,7 +17,9 @@
     kotlinx.serialization.KSerializer serializer(...);
 }
 
-# OkHttp
+# OkHttp 5.x
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
 -dontwarn okhttp3.internal.platform.**
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**

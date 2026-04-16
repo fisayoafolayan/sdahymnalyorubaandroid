@@ -142,7 +142,7 @@ class HymnRepository(private val context: Context, private val preferences: Pref
                     null
                 }
                 in 200..299 -> {
-                    val body = response.body?.string() ?: throw Exception("Empty response")
+                    val body = response.body.string()
                     val hymns = json.decodeFromString<List<Hymn>>(body).sortedBy { it.number }
                     // Atomic write: temp file then rename, so a crash mid-write
                     // can't corrupt the cache and break offline access
