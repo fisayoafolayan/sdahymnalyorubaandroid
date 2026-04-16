@@ -190,6 +190,15 @@ fun MoreScreen(
                 subtitle = fontSizeLabel,
                 onClick = onCycleReadingFontSize,
             )
+            Text(
+                text = "Jẹ́ ká jọ yìn Ọlọ́run",
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontSize = 17.sp * readingFontSize,
+                    lineHeight = 17.sp * readingFontSize * 1.65f,
+                ),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                modifier = Modifier.padding(start = 56.dp, end = 16.dp, bottom = 12.dp),
+            )
 
             // HYMN DATA
             SectionHeader("Hymn Data")
