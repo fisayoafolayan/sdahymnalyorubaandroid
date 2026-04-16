@@ -3,6 +3,7 @@ package com.sdahymnal.yoruba.ui.screens
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BrightnessAuto
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Email
@@ -29,6 +34,9 @@ import androidx.compose.material.icons.outlined.Policy
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.StarRate
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -60,13 +68,14 @@ fun MoreScreen(
     favoritesCount: Int = 0,
     hymnCacheVersion: String? = null,
     readingFontSize: Float = 1.0f,
-    onToggleTheme: () -> Unit,
+    onSetTheme: (String) -> Unit,
     onCycleReadingFontSize: () -> Unit = {},
     onClearFavorites: () -> Unit = {},
     onTrackEvent: (String) -> Unit = {},
 ) {
     val context = LocalContext.current
     var showClearDialog by remember { mutableStateOf(false) }
+    var showThemeMenu by remember { mutableStateOf(false) }
 
     val themeLabel = when (themeMode) {
         "light" -> "Light"
@@ -132,12 +141,49 @@ fun MoreScreen(
         ) {
             // APPEARANCE
             SectionHeader("Appearance")
-            SettingsRow(
-                icon = Icons.Outlined.Palette,
-                title = "Theme",
-                subtitle = themeLabel,
-                onClick = onToggleTheme,
-            )
+            Box {
+                SettingsRow(
+                    icon = Icons.Outlined.Palette,
+                    title = "Theme",
+                    subtitle = themeLabel,
+                    onClick = { showThemeMenu = true },
+                )
+                DropdownMenu(
+                    expanded = showThemeMenu,
+                    onDismissRequest = { showThemeMenu = false },
+                    offset = DpOffset(x = 56.dp, y = (-48).dp),
+                ) {
+                    listOf(
+                        Triple("light", "Light", Icons.Default.LightMode),
+                        Triple("dark", "Dark", Icons.Default.DarkMode),
+                        Triple("system", "System", Icons.Default.BrightnessAuto),
+                    ).forEach { (mode, label, icon) ->
+                        DropdownMenuItem(
+                            text = { Text(label) },
+                            onClick = {
+                                showThemeMenu = false
+                                onSetTheme(mode)
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            },
+                            trailingIcon = {
+                                if (themeMode == mode) {
+                                    Icon(
+                                        imageVector = Icons.Default.Check,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                    )
+                                }
+                            },
+                        )
+                    }
+                }
+            }
             SettingsRow(
                 icon = Icons.Outlined.FormatSize,
                 title = "Reading Font Size",

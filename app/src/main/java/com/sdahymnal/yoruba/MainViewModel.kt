@@ -34,15 +34,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _themeMode = MutableStateFlow(preferences.themeMode)
     val themeMode: StateFlow<String> = _themeMode
 
-    fun toggleTheme() {
-        val next = when (_themeMode.value) {
-            "light" -> "dark"
-            "dark" -> "system"
-            else -> "light"
-        }
-        _themeMode.value = next
-        preferences.themeMode = next
-        Analytics.trackEvent("theme_$next")
+    fun setTheme(mode: String) {
+        _themeMode.value = mode
+        preferences.themeMode = mode
+        Analytics.trackEvent("theme_$mode")
     }
 
     // --- Font sizes ---

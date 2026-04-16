@@ -189,7 +189,7 @@ fun HymnNavGraph(
                             },
                             favorites = favorites,
                             themeMode = themeMode,
-                            onToggleTheme = { viewModel.toggleTheme() },
+                            onSetTheme = { viewModel.setTheme(it) },
                         )
                     }
 
@@ -254,7 +254,7 @@ fun HymnNavGraph(
                             favoritesCount = favorites.size,
                             hymnCacheVersion = viewModel.hymnCacheVersion,
                             readingFontSize = readingFontSize,
-                            onToggleTheme = { viewModel.toggleTheme() },
+                            onSetTheme = { viewModel.setTheme(it) },
                             onCycleReadingFontSize = { viewModel.cycleReadingFontSize() },
                             onClearFavorites = { viewModel.clearFavorites() },
                             onTrackEvent = { viewModel.trackEvent(it) },

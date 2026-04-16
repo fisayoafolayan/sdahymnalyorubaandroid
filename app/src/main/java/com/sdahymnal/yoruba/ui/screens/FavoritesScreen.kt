@@ -15,13 +15,21 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import com.sdahymnal.yoruba.R
 import com.sdahymnal.yoruba.data.Hymn
 import com.sdahymnal.yoruba.ui.components.BrandHeader
@@ -35,9 +43,25 @@ fun FavoritesScreen(
     onToggleFavorite: (Int) -> Unit = {},
     onBrowseHymns: () -> Unit = {},
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = { BrandHeader() },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.padding(bottom = 64.dp),
+            ) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    containerColor = MaterialTheme.colorScheme.inverseSurface,
+                    contentColor = MaterialTheme.colorScheme.inverseOnSurface,
+                    actionColor = MaterialTheme.colorScheme.primary,
+                )
+            }
+        },
     ) { padding ->
         if (favoriteHymns.isEmpty()) {
             Column(
@@ -96,7 +120,19 @@ fun FavoritesScreen(
                             hymn = hymn,
                             isSelected = hymn.number == selectedHymnNumber,
                             isFavorite = true,
-                            onFavoriteClick = { onToggleFavorite(hymn.number) },
+                            onFavoriteClick = {
+                                onToggleFavorite(hymn.number)
+                                scope.launch {
+                                    val result = snackbarHostState.showSnackbar(
+                                        message = "Removed \u201C${hymn.title}\u201D",
+                                        actionLabel = "Undo",
+                                        duration = SnackbarDuration.Short,
+                                    )
+                                    if (result == SnackbarResult.ActionPerformed) {
+                                        onToggleFavorite(hymn.number)
+                                    }
+                                }
+                            },
                             onClick = { onHymnClick(hymn) },
                             modifier = Modifier.animateItem(),
                         )
