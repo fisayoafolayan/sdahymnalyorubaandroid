@@ -1,9 +1,12 @@
 package com.sdahymnal.yoruba.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BrightnessAuto
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.outlined.SearchOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.pluralStringResource
@@ -95,32 +100,61 @@ fun HymnListScreen(
                     onQueryChange = onSearchQueryChange,
                 )
 
-                Text(
-                    text = pluralStringResource(R.plurals.hymn_count, displayedHymns.size, displayedHymns.size),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                )
-
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize(),
-                ) {
-                    items(
-                        items = displayedHymns,
-                        key = { it.number },
-                    ) { hymn ->
-                        HymnRow(
-                            hymn = hymn,
-                            isSelected = hymn.number == selectedHymnNumber,
-                            isFavorite = hymn.number in favorites,
-                            searchQuery = searchQuery,
-                            onClick = {
-                                focusManager.clearFocus()
-                                onHymnClick(hymn)
-                            },
-                            modifier = Modifier.animateItem(),
+                if (displayedHymns.isEmpty() && searchQuery.isNotBlank()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(32.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.SearchOff,
+                            contentDescription = null,
+                            modifier = Modifier.size(48.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
                         )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "No hymns found",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Try a different search term",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f),
+                        )
+                    }
+                } else {
+                    Text(
+                        text = pluralStringResource(R.plurals.hymn_count, displayedHymns.size, displayedHymns.size),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                    )
+
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        items(
+                            items = displayedHymns,
+                            key = { it.number },
+                        ) { hymn ->
+                            HymnRow(
+                                hymn = hymn,
+                                isSelected = hymn.number == selectedHymnNumber,
+                                isFavorite = hymn.number in favorites,
+                                searchQuery = searchQuery,
+                                onClick = {
+                                    focusManager.clearFocus()
+                                    onHymnClick(hymn)
+                                },
+                                modifier = Modifier.animateItem(),
+                            )
+                        }
                     }
                 }
             }
