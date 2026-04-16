@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.sdahymnal.yoruba.ui.screens.MoreScreen
 import com.sdahymnal.yoruba.ui.theme.SDAHymnalTheme
 import org.junit.Rule
@@ -28,9 +29,9 @@ class MoreScreenTest {
         }
 
         composeTestRule.onNodeWithText("Appearance").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Hymn Data").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Spread the Word").assertIsDisplayed()
-        composeTestRule.onNodeWithText("About").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Hymn Data").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Spread the Word").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("About").performScrollTo().assertIsDisplayed()
     }
 
     @Test

@@ -57,7 +57,7 @@
     <string name="section_hymn_data">Hymn Data</string>
     <string name="setting_hymns">Hymns</string>
     <string name="hymns_cached">%d hymns cached</string>
-    <string name="hymns_cached_version">%d hymns cached \u00B7 %s</string>
+    <string name="hymns_cached_version">%1$d hymns cached \u00B7 %2$s</string>
     <string name="setting_favorites">Favorites</string>
     <string name="no_favorites">No favorites</string>
     <string name="setting_clear_favorites">Clear Favorites</string>
