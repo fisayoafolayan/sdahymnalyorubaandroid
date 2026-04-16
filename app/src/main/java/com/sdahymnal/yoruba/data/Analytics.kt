@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.concurrent.TimeUnit
@@ -19,7 +18,8 @@ object Analytics {
     private const val WEBSITE_ID = "20dd9029-2ed1-4919-a60d-ae74d89795c1"
     private const val HOSTNAME = "android.sdahymnalyoruba.com"
 
-    private val client = OkHttpClient.Builder()
+    // Derives from shared base - reuses connection pool and dispatcher,
+    private val client = HttpClient.base.newBuilder()
         .connectTimeout(5, TimeUnit.SECONDS)
         .readTimeout(5, TimeUnit.SECONDS)
         .build()

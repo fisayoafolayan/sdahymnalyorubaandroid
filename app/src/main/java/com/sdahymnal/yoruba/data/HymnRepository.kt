@@ -7,13 +7,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.text.Normalizer
-import java.util.concurrent.TimeUnit
 
 sealed class HymnLoadState {
     data object Loading : HymnLoadState()
@@ -28,10 +26,8 @@ class HymnRepository(private val context: Context) {
     private val cacheTempFile = File(context.filesDir, "hymns_cache.json.tmp")
     private val preferences = Preferences(context)
 
-    private val client = OkHttpClient.Builder()
-        .connectTimeout(15, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .build()
+    // Reuses shared connection pool and dispatcher from HttpClient.base
+    private val client = HttpClient.base
 
     private val _state = MutableStateFlow<HymnLoadState>(HymnLoadState.Loading)
     val state: StateFlow<HymnLoadState> = _state
