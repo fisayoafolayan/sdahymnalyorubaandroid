@@ -16,3 +16,14 @@
 -keepclasseswithmembers class com.sdahymnal.yoruba.data.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
+
+# OkHttp
+-dontwarn okhttp3.internal.platform.**
+-dontwarn org.conscrypt.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.openjsse.**
+
+# Sentry
+-keep class io.sentry.** { *; }
+-keepnames class io.sentry.** { *; }
+-dontwarn io.sentry.**
