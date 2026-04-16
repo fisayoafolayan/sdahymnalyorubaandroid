@@ -172,11 +172,10 @@ class HymnRepository(private val context: Context, private val preferences: Pref
             context.getString(R.string.error_timeout)
         is kotlinx.serialization.SerializationException ->
             context.getString(R.string.error_invalid_data)
-        else -> {
-            val msg = e.message
-            if (msg != null && msg.startsWith("HTTP ")) {
-                val code = msg.removePrefix("HTTP ").toIntOrNull()
-                when (code) {
+        else -> when (val msg = e.message) {
+            null -> context.getString(R.string.error_generic)
+            else -> if (msg.startsWith("HTTP ")) {
+                when (val code = msg.removePrefix("HTTP ").toIntOrNull()) {
                     in 500..599 -> context.getString(R.string.error_server)
                     403 -> context.getString(R.string.error_forbidden)
                     404 -> context.getString(R.string.error_not_found)
