@@ -1,5 +1,8 @@
 package com.sdahymnal.yoruba.data
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class HymnCategory(
     val id: String,
     val name: String,

@@ -1,5 +1,7 @@
 package com.sdahymnal.yoruba.data
 
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
@@ -7,6 +9,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
 
+@Immutable
 @Serializable
 data class Hymn(
     val index: String,
@@ -18,6 +21,7 @@ data class Hymn(
     val revision: Int = 0,
 )
 
+@Stable
 @Serializable
 data class LyricBlock(
     val type: String,
@@ -39,6 +43,7 @@ data class LyricBlock(
         }
 }
 
+@Immutable
 data class CallResponseLine(
     val part: String,
     val text: String,
