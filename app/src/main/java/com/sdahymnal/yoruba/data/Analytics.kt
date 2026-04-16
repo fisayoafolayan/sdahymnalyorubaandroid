@@ -62,7 +62,8 @@ object Analytics {
                     .header("User-Agent", "SDAHymnalYoruba-Android/1.0")
                     .build()
                 client.newCall(request).execute().close()
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                io.sentry.Sentry.captureException(e)
             }
         }
     }

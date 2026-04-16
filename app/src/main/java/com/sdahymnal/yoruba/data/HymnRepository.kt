@@ -126,7 +126,10 @@ class HymnRepository(private val context: Context, private val preferences: Pref
         return try {
             val text = cacheFile.readText()
             json.decodeFromString<List<Hymn>>(text).sortedBy { it.number }
-        } catch (_: Exception) { null }
+        } catch (e: Exception) {
+            io.sentry.Sentry.captureException(e)
+            null
+        }
     }
 
     /** Returns new hymns if changed, null if server returned 304 Not Modified. */
