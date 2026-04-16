@@ -89,20 +89,20 @@ class HymnRepository(private val context: Context, private val preferences: Pref
             } else if (isDigits && entry.number.startsWith(normalised)) {
                 score = 90
             }
-            val titleQ = entry.title.matchQuality(normalised, spaceless, words)
+            val titleQ = matchQuality(entry.title, entry.titleSpaceless, normalised, spaceless, words)
             if (titleQ == 2) score = maxOf(score, 80)
             else if (titleQ == 1) score = maxOf(score, 75)
 
-            val engQ = entry.englishTitle.matchQuality(normalised, spaceless, words)
+            val engQ = matchQuality(entry.englishTitle, entry.englishTitleSpaceless, normalised, spaceless, words)
             if (engQ == 2) score = maxOf(score, 70)
             else if (engQ == 1) score = maxOf(score, 65)
 
-            val refsQ = entry.refs.matchQuality(normalised, spaceless, words)
+            val refsQ = matchQuality(entry.refs, entry.refsSpaceless, normalised, spaceless, words)
             if (refsQ == 2) score = maxOf(score, 60)
             else if (refsQ == 1) score = maxOf(score, 55)
 
             if (score == 0) {
-                val lyricsQ = entry.lyrics.matchQuality(normalised, spaceless, words)
+                val lyricsQ = matchQuality(entry.lyrics, entry.lyricsSpaceless, normalised, spaceless, words)
                 if (lyricsQ == 2) score = 40
                 else if (lyricsQ == 1) score = 35
             }
@@ -115,11 +115,14 @@ class HymnRepository(private val context: Context, private val preferences: Pref
     }
 
     /** Match quality: 2 = exact/spaceless substring, 1 = all words present, 0 = no match. */
-    private fun String.matchQuality(full: String, spaceless: String, words: List<String>): Int {
-        if (contains(full)) return 2
-        val noSpaces = replace(" ", "")
-        if (noSpaces.contains(spaceless)) return 2
-        if (words.size > 1 && words.all { contains(it) || noSpaces.contains(it) }) return 1
+    private fun matchQuality(
+        text: String, textSpaceless: String,
+        query: String, querySpaceless: String,
+        words: List<String>,
+    ): Int {
+        if (text.contains(query)) return 2
+        if (textSpaceless.contains(querySpaceless)) return 2
+        if (words.size > 1 && words.all { text.contains(it) || textSpaceless.contains(it) }) return 1
         return 0
     }
 
@@ -133,14 +136,22 @@ class HymnRepository(private val context: Context, private val preferences: Pref
             }
         }
         val refs = hymn.references.entries.joinToString(" ") { "${it.key} ${it.value}" }
+        val normTitle = removeDiacritics(hymn.title)
+        val normEng = removeDiacritics(hymn.englishTitle)
+        val normRefs = removeDiacritics(refs)
+        val normLyrics = removeDiacritics(lyrics)
 
         SearchEntry(
             hymn = hymn,
             number = hymn.number.toString(),
-            title = removeDiacritics(hymn.title),
-            englishTitle = removeDiacritics(hymn.englishTitle),
-            refs = removeDiacritics(refs),
-            lyrics = removeDiacritics(lyrics),
+            title = normTitle,
+            titleSpaceless = normTitle.replace(" ", ""),
+            englishTitle = normEng,
+            englishTitleSpaceless = normEng.replace(" ", ""),
+            refs = normRefs,
+            refsSpaceless = normRefs.replace(" ", ""),
+            lyrics = normLyrics,
+            lyricsSpaceless = normLyrics.replace(" ", ""),
         )
     }
 
@@ -192,9 +203,13 @@ class HymnRepository(private val context: Context, private val preferences: Pref
         val hymn: Hymn,
         val number: String,
         val title: String,
+        val titleSpaceless: String,
         val englishTitle: String,
+        val englishTitleSpaceless: String,
         val refs: String,
+        val refsSpaceless: String,
         val lyrics: String,
+        val lyricsSpaceless: String,
     )
 
     private fun errorMessage(e: Exception): String = when (e) {
