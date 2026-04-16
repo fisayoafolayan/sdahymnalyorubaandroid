@@ -13,6 +13,7 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.text.Normalizer
 
+@androidx.compose.runtime.Stable
 sealed class HymnLoadState {
     data object Loading : HymnLoadState()
     data class Ready(val hymns: List<Hymn>) : HymnLoadState()
