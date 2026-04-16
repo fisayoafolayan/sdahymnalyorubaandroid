@@ -134,6 +134,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         Analytics.trackEvent("category_$categoryId")
     }
 
+    fun trackPageView(url: String) {
+        Analytics.trackPageView(url)
+    }
+
     fun trackEvent(name: String) {
         Analytics.trackEvent(name)
     }

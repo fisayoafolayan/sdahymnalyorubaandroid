@@ -81,14 +81,31 @@ fun HymnNavGraph(
     val currentRoute = navBackStackEntry?.destination?.route
     val showBottomBar = currentRoute != Routes.PRESENTATION
 
-    // Derive selected tab from navigation state (not during composition)
+    // Derive selected tab and track screen views from navigation state
     LaunchedEffect(currentRoute) {
         when (currentRoute) {
-            Routes.HYMN_LIST -> selectedTab = BottomTab.Hymns
-            Routes.CATEGORIES, Routes.CATEGORY_DETAIL -> selectedTab = BottomTab.Categories
-            Routes.FAVORITES -> selectedTab = BottomTab.Favorites
-            Routes.MORE -> selectedTab = BottomTab.More
-            // Detail/presentation routes keep the current tab
+            Routes.HYMN_LIST -> {
+                selectedTab = BottomTab.Hymns
+                viewModel.trackPageView("/hymns")
+            }
+            Routes.CATEGORIES -> {
+                selectedTab = BottomTab.Categories
+                viewModel.trackPageView("/categories")
+            }
+            Routes.CATEGORY_DETAIL -> {
+                selectedTab = BottomTab.Categories
+                viewModel.trackPageView("/categories/detail")
+            }
+            Routes.FAVORITES -> {
+                selectedTab = BottomTab.Favorites
+                viewModel.trackPageView("/favorites")
+            }
+            Routes.MORE -> {
+                selectedTab = BottomTab.More
+                viewModel.trackPageView("/more")
+            }
+            Routes.HYMN_DETAIL -> viewModel.trackPageView("/hymn")
+            Routes.PRESENTATION -> viewModel.trackPageView("/presentation")
         }
     }
 
