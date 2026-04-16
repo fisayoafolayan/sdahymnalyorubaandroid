@@ -60,6 +60,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.compose.ui.res.stringResource
+import com.sdahymnal.yoruba.R
 import com.sdahymnal.yoruba.data.Hymn
 import com.sdahymnal.yoruba.ui.theme.findActivity
 import com.sdahymnal.yoruba.ui.theme.NotoSerif
@@ -181,14 +183,14 @@ fun PresentationScreen(
             ) {
                 if (isPortrait) {
                     Text(
-                        text = "rotate for best projection",
+                        text = stringResource(R.string.pres_rotate_hint),
                         style = TextStyle(fontFamily = NotoSerif, fontSize = 11.sp),
                         color = StageText.copy(alpha = 0.25f),
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                 }
                 Text(
-                    text = "swipe or tap to advance",
+                    text = stringResource(R.string.pres_swipe_hint),
                     style = TextStyle(fontFamily = NotoSerif, fontSize = 11.sp),
                     color = StageText.copy(alpha = 0.25f),
                 )
@@ -357,7 +359,7 @@ private fun TitleSlide(hymn: Hymn, titleSize: androidx.compose.ui.unit.TextUnit)
                     .padding(horizontal = 16.dp, vertical = 6.dp),
             ) {
                 Text(
-                    text = "HYMN ${hymn.number}",
+                    text = stringResource(R.string.hymn_title_format, hymn.number).uppercase(),
                     style = TextStyle(
                         fontFamily = NotoSerif,
                         fontSize = 14.sp,
@@ -534,7 +536,7 @@ private fun EndSlide() {
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = "End of Hymn",
+                text = stringResource(R.string.pres_end_of_hymn),
                 style = TextStyle(
                     fontFamily = PlayfairDisplay,
                     fontSize = 22.sp,

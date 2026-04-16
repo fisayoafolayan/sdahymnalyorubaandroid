@@ -28,6 +28,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
+import com.sdahymnal.yoruba.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -56,7 +58,7 @@ fun NumberPadDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "Go to Hymn",
+                    text = stringResource(R.string.go_to_hymn),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontFamily = PlayfairDisplay,
                     ),
@@ -117,7 +119,7 @@ fun NumberPadDialog(
                 if (showError) {
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Hymn not found",
+                        text = stringResource(R.string.hymn_not_found),
                         style = MaterialTheme.typography.bodySmall,
                         color = com.sdahymnal.yoruba.ui.theme.FavoriteHeart,
                     )
@@ -163,7 +165,7 @@ fun NumberPadDialog(
                                         contentAlignment = Alignment.Center,
                                     ) {
                                         Text(
-                                            text = "Go",
+                                            text = stringResource(R.string.action_go),
                                             fontFamily = NotoSerif,
                                             fontSize = 18.sp,
                                             fontWeight = FontWeight.Bold,
@@ -208,7 +210,7 @@ fun NumberPadDialog(
 
                 TextButton(onClick = onDismiss) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.action_cancel),
                         fontFamily = NotoSerif,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

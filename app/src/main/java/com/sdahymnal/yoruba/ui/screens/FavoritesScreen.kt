@@ -28,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import com.sdahymnal.yoruba.R
@@ -45,6 +46,7 @@ fun FavoritesScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val undoLabel = stringResource(R.string.action_undo)
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -79,20 +81,20 @@ fun FavoritesScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "No favorites yet",
+                    text = stringResource(R.string.no_favorites_yet),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Tap the heart on any hymn to add it here",
+                    text = stringResource(R.string.favorites_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f),
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 TextButton(onClick = onBrowseHymns) {
                     Text(
-                        text = "Browse Hymns",
+                        text = stringResource(R.string.action_browse_hymns),
                         color = MaterialTheme.colorScheme.primary,
                     )
                 }
@@ -122,8 +124,8 @@ fun FavoritesScreen(
                                 onToggleFavorite(hymn.number)
                                 scope.launch {
                                     val result = snackbarHostState.showSnackbar(
-                                        message = "Removed \u201C${hymn.title}\u201D",
-                                        actionLabel = "Undo",
+                                        message = "\u201C${hymn.title}\u201D",
+                                        actionLabel = undoLabel,
                                         duration = SnackbarDuration.Short,
                                     )
                                     if (result == SnackbarResult.ActionPerformed) {

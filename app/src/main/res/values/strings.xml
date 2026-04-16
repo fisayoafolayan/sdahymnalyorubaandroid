@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SDA Hymnal Yorùbá</string>
+    <string name="app_tagline">WORSHIP \u00B7 STUDY</string>
     <string name="search_placeholder">Search by title, number or lyrics\u2026</string>
+    <string name="search_categories_placeholder">Search categories\u2026</string>
     <plurals name="hymn_count">
         <item quantity="one">%d hymn</item>
         <item quantity="other">%d hymns</item>
@@ -10,6 +12,71 @@
         <item quantity="one">%d category</item>
         <item quantity="other">%d categories</item>
     </plurals>
+
+    <!-- Common actions -->
+    <string name="action_retry">Retry</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_undo">Undo</string>
+    <string name="action_go">Go</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_browse_hymns">Browse Hymns</string>
+
+    <!-- Hymn detail -->
+    <string name="hymn_title_format">Hymn %d</string>
+    <string name="share_hymn_format">Hymn %1$d: %2$s\nhttps://sdahymnalyoruba.com/?hymn=%1$d</string>
+    <string name="share_hymn_chooser">Share Hymn %d</string>
+
+    <!-- Number pad -->
+    <string name="go_to_hymn">Go to Hymn</string>
+    <string name="hymn_not_found">Hymn not found</string>
+
+    <!-- Empty states -->
+    <string name="no_hymns_found">No hymns found</string>
+    <string name="try_different_search">Try a different search term</string>
+    <string name="no_favorites_yet">No favorites yet</string>
+    <string name="favorites_hint">Tap the heart on any hymn to add it here</string>
+    <string name="no_categories_found">No categories found</string>
+    <string name="favorite_removed">Removed \u201C%s\u201D</string>
+
+    <!-- Presentation -->
+    <string name="pres_rotate_hint">rotate for best projection</string>
+    <string name="pres_swipe_hint">swipe or tap to advance</string>
+    <string name="pres_end_of_hymn">End of Hymn</string>
+
+    <!-- More / Settings -->
+    <string name="section_appearance">Appearance</string>
+    <string name="setting_theme">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System</string>
+    <string name="setting_font_size">Reading Font Size</string>
+    <string name="font_size_small">Small (1.0x)</string>
+    <string name="font_size_medium">Medium (1.2x)</string>
+    <string name="font_size_large">Large (1.45x)</string>
+    <string name="font_size_preview">Jẹ́ ká jọ yìn Ọlọ́run</string>
+    <string name="section_hymn_data">Hymn Data</string>
+    <string name="setting_hymns">Hymns</string>
+    <string name="hymns_cached">%d hymns cached</string>
+    <string name="hymns_cached_version">%d hymns cached \u00B7 %s</string>
+    <string name="setting_favorites">Favorites</string>
+    <string name="no_favorites">No favorites</string>
+    <string name="setting_clear_favorites">Clear Favorites</string>
+    <string name="clear_favorites_subtitle">Remove all favorites</string>
+    <string name="clear_favorites_confirm">This will remove all %d hymns from your favorites.</string>
+    <string name="section_spread">Spread the Word</string>
+    <string name="setting_share_app">Share App</string>
+    <string name="share_app_subtitle">Tell others about SDA Hymnal Yoruba</string>
+    <string name="share_app_text">Check out SDA Hymnal Yoruba - Browse, search, and present Seventh-day Adventist hymns in Yoruba.\n\nhttps://sdahymnalyoruba.com</string>
+    <string name="share_app_chooser">Share App</string>
+    <string name="setting_rate_app">Rate this App</string>
+    <string name="rate_app_subtitle">Leave a review on the Play Store</string>
+    <string name="section_about">About</string>
+    <string name="setting_website">Website</string>
+    <string name="setting_contact">Contact</string>
+    <string name="setting_github">GitHub</string>
+    <string name="setting_version">Version</string>
+    <string name="setting_privacy">Privacy Policy</string>
+    <string name="copyright_format">\u00A9 %d SDA Hymnal Yoruba</string>
 
     <!-- Network errors -->
     <string name="error_no_internet">No internet connection. Please check your network and try again.</string>

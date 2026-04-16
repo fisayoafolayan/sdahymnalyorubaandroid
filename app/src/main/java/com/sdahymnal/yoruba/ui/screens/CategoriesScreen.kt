@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.automirrored.outlined.DirectionsWalk
+import androidx.compose.material.icons.automirrored.outlined.QueueMusic
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -37,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -66,7 +69,7 @@ private fun categoryIcon(iconKey: String): ImageVector = when (iconKey) {
 
     // JESUS CHRIST
     "birth"          -> Icons.Outlined.CardGiftcard         // gift of Christ
-    "ministry"       -> Icons.Outlined.DirectionsWalk       // walking/serving
+    "ministry"       -> Icons.AutoMirrored.Outlined.DirectionsWalk // walking/serving
     "suffering"      -> Icons.Outlined.HeartBroken          // suffering heart
     "resurrection"   -> Icons.Outlined.KeyboardArrowUp      // rising up
     "priesthood"     -> Icons.Outlined.WorkspacePremium     // priestly crown
@@ -132,7 +135,7 @@ private fun categoryIcon(iconKey: String): ImageVector = when (iconKey) {
     "misc"           -> Icons.Outlined.Shuffle               // variety
 
     // CHOIR
-    "choir"          -> Icons.Outlined.QueueMusic            // choir music
+    "choir"          -> Icons.AutoMirrored.Outlined.QueueMusic // choir music
 
     // INDIGENOUS
     "indigenous"     -> Icons.Outlined.Public                // cultural/global
@@ -201,13 +204,13 @@ fun CategoriesScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "No categories found",
+                        text = stringResource(R.string.no_categories_found),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Try a different search term",
+                        text = stringResource(R.string.try_different_search),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f),
                     )
@@ -249,7 +252,7 @@ private fun CategorySearchBar(
             .padding(start = 16.dp, end = 16.dp, top = 0.dp, bottom = 4.dp),
         placeholder = {
             Text(
-                text = "Search categories\u2026",
+                text = stringResource(R.string.search_categories_placeholder),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
             )

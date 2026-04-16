@@ -13,14 +13,13 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.material3.Icon
-import androidx.compose.ui.res.stringResource
-import com.sdahymnal.yoruba.R
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,14 +59,14 @@ fun BrandHeader(
                     Spacer(modifier = Modifier.width(5.dp))
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "SDA Hymnal Yoruba",
+                            text = stringResource(R.string.app_name),
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.primary,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
                         Text(
-                            text = "WORSHIP \u00B7 STUDY",
+                            text = stringResource(R.string.app_tagline),
                             style = MaterialTheme.typography.labelSmall.copy(
                                 letterSpacing = 2.sp,
                                 fontSize = 9.sp,

@@ -19,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.sdahymnal.yoruba.R
 import com.sdahymnal.yoruba.ui.components.BrandHeader
 import com.sdahymnal.yoruba.ui.theme.PurpleHeader
 
@@ -54,7 +56,7 @@ fun ErrorScreen(
                 onClick = onRetry,
                 colors = ButtonDefaults.buttonColors(containerColor = PurpleHeader),
             ) {
-                Text("Retry")
+                Text(stringResource(R.string.action_retry))
             }
         }
     }

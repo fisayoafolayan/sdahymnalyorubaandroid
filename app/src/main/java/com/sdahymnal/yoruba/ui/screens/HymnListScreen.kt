@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sdahymnal.yoruba.R
 import com.sdahymnal.yoruba.data.Hymn
@@ -95,9 +96,9 @@ fun HymnListScreen(
                             onDismissRequest = { showThemeMenu = false },
                         ) {
                             listOf(
-                                Triple("light", "Light", Icons.Default.LightMode),
-                                Triple("dark", "Dark", Icons.Default.DarkMode),
-                                Triple("system", "System", Icons.Default.BrightnessAuto),
+                                Triple("light", stringResource(R.string.theme_light), Icons.Default.LightMode),
+                                Triple("dark", stringResource(R.string.theme_dark), Icons.Default.DarkMode),
+                                Triple("system", stringResource(R.string.theme_system), Icons.Default.BrightnessAuto),
                             ).forEach { (mode, label, icon) ->
                                 DropdownMenuItem(
                                     text = { Text(label) },
@@ -156,13 +157,13 @@ fun HymnListScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "No hymns found",
+                            text = stringResource(R.string.no_hymns_found),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Try a different search term",
+                            text = stringResource(R.string.try_different_search),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f),
                         )

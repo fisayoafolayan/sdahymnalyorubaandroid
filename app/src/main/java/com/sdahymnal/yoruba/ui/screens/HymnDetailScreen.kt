@@ -51,6 +51,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -99,7 +100,7 @@ fun HymnDetailScreen(
                 },
                 title = {
                     Text(
-                        text = "Hymn ${hymn.number}",
+                        text = stringResource(R.string.hymn_title_format, hymn.number),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -307,6 +308,8 @@ private fun HymnContent(
         }
 
         // Share at the end of the hymn
+        val shareText = stringResource(R.string.share_hymn_format, hymn.number, hymn.title)
+        val shareChooser = stringResource(R.string.share_hymn_chooser, hymn.number)
         Box(
             modifier = Modifier
                 .padding(vertical = 8.dp)
@@ -314,15 +317,12 @@ private fun HymnContent(
                 .clip(RoundedCornerShape(24.dp))
                 .clickable {
                     onShare()
-                    val shareText = "Hymn ${hymn.number}: ${hymn.title}\nhttps://sdahymnalyoruba.com/?hymn=${hymn.number}"
                     val sendIntent = Intent().apply {
                         action = Intent.ACTION_SEND
                         putExtra(Intent.EXTRA_TEXT, shareText)
                         type = "text/plain"
                     }
-                    context.startActivity(
-                        Intent.createChooser(sendIntent, "Share Hymn ${hymn.number}")
-                    )
+                    context.startActivity(Intent.createChooser(sendIntent, shareChooser))
                 },
             contentAlignment = Alignment.Center,
         ) {

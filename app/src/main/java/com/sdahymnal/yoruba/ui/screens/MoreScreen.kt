@@ -54,6 +54,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -78,15 +79,15 @@ fun MoreScreen(
     var showThemeMenu by remember { mutableStateOf(false) }
 
     val themeLabel = when (themeMode) {
-        "light" -> "Light"
-        "dark" -> "Dark"
-        else -> "System"
+        "light" -> stringResource(R.string.theme_light)
+        "dark" -> stringResource(R.string.theme_dark)
+        else -> stringResource(R.string.theme_system)
     }
 
     val fontSizeLabel = when (readingFontSize) {
-        1.0f -> "Small (1.0x)"
-        1.2f -> "Medium (1.2x)"
-        1.45f -> "Large (1.45x)"
+        1.0f -> stringResource(R.string.font_size_small)
+        1.2f -> stringResource(R.string.font_size_medium)
+        1.45f -> stringResource(R.string.font_size_large)
         else -> "${readingFontSize}x"
     }
 
@@ -96,13 +97,13 @@ fun MoreScreen(
             onDismissRequest = { showClearDialog = false },
             title = {
                 Text(
-                    "Clear Favorites",
+                    stringResource(R.string.setting_clear_favorites),
                     style = MaterialTheme.typography.titleLarge,
                 )
             },
             text = {
                 Text(
-                    "This will remove all $favoritesCount hymns from your favorites.",
+                    stringResource(R.string.clear_favorites_confirm, favoritesCount),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             },
@@ -112,7 +113,7 @@ fun MoreScreen(
                     onClearFavorites()
                 }) {
                     Text(
-                        "Clear",
+                        stringResource(R.string.action_clear),
                         style = MaterialTheme.typography.bodyMedium,
                         color = FavoriteHeart,
                     )
@@ -121,7 +122,7 @@ fun MoreScreen(
             dismissButton = {
                 TextButton(onClick = { showClearDialog = false }) {
                     Text(
-                        "Cancel",
+                        stringResource(R.string.action_cancel),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -140,11 +141,11 @@ fun MoreScreen(
                 .verticalScroll(rememberScrollState()),
         ) {
             // APPEARANCE
-            SectionHeader("Appearance")
+            SectionHeader(stringResource(R.string.section_appearance))
             Box {
                 SettingsRow(
                     icon = Icons.Outlined.Palette,
-                    title = "Theme",
+                    title = stringResource(R.string.setting_theme),
                     subtitle = themeLabel,
                     onClick = { showThemeMenu = true },
                 )
@@ -154,9 +155,9 @@ fun MoreScreen(
                     offset = DpOffset(x = 56.dp, y = (-48).dp),
                 ) {
                     listOf(
-                        Triple("light", "Light", Icons.Default.LightMode),
-                        Triple("dark", "Dark", Icons.Default.DarkMode),
-                        Triple("system", "System", Icons.Default.BrightnessAuto),
+                        Triple("light", stringResource(R.string.theme_light), Icons.Default.LightMode),
+                        Triple("dark", stringResource(R.string.theme_dark), Icons.Default.DarkMode),
+                        Triple("system", stringResource(R.string.theme_system), Icons.Default.BrightnessAuto),
                     ).forEach { (mode, label, icon) ->
                         DropdownMenuItem(
                             text = { Text(label) },
@@ -186,12 +187,12 @@ fun MoreScreen(
             }
             SettingsRow(
                 icon = Icons.Outlined.FormatSize,
-                title = "Reading Font Size",
+                title = stringResource(R.string.setting_font_size),
                 subtitle = fontSizeLabel,
                 onClick = onCycleReadingFontSize,
             )
             Text(
-                text = "Jẹ́ ká jọ yìn Ọlọ́run",
+                text = stringResource(R.string.font_size_preview),
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontSize = 17.sp * readingFontSize,
                     lineHeight = 17.sp * readingFontSize * 1.65f,
@@ -201,47 +202,48 @@ fun MoreScreen(
             )
 
             // HYMN DATA
-            SectionHeader("Hymn Data")
+            SectionHeader(stringResource(R.string.section_hymn_data))
             SettingsRow(
                 icon = Icons.Outlined.LibraryMusic,
-                title = "Hymns",
-                subtitle = "$hymnCount hymns cached" + if (hymnCacheVersion != null) " \u00B7 $hymnCacheVersion" else "",
+                title = stringResource(R.string.setting_hymns),
+                subtitle = if (hymnCacheVersion != null) stringResource(R.string.hymns_cached_version, hymnCount, hymnCacheVersion)
+                    else stringResource(R.string.hymns_cached, hymnCount),
             )
             SettingsRow(
                 icon = Icons.Outlined.Favorite,
-                title = "Favorites",
-                subtitle = if (favoritesCount == 0) "No favorites"
+                title = stringResource(R.string.setting_favorites),
+                subtitle = if (favoritesCount == 0) stringResource(R.string.no_favorites)
                     else pluralStringResource(R.plurals.hymn_count, favoritesCount, favoritesCount),
             )
             if (favoritesCount > 0) {
                 SettingsRow(
                     icon = Icons.Outlined.DeleteSweep,
-                    title = "Clear Favorites",
-                    subtitle = "Remove all favorites",
+                    title = stringResource(R.string.setting_clear_favorites),
+                    subtitle = stringResource(R.string.clear_favorites_subtitle),
                     titleColor = FavoriteHeart,
                     onClick = { showClearDialog = true },
                 )
             }
 
             // SHARE & RATE
-            SectionHeader("Spread the Word")
+            SectionHeader(stringResource(R.string.section_spread))
             SettingsRow(
                 icon = Icons.Outlined.Share,
-                title = "Share App",
-                subtitle = "Tell others about SDA Hymnal Yoruba",
+                title = stringResource(R.string.setting_share_app),
+                subtitle = stringResource(R.string.share_app_subtitle),
                 onClick = {
                     onTrackEvent("share_app")
                     val shareIntent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
-                        putExtra(Intent.EXTRA_TEXT, "Check out SDA Hymnal Yoruba - Browse, search, and present Seventh-day Adventist hymns in Yoruba.\n\nhttps://sdahymnalyoruba.com")
+                        putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_app_text))
                     }
-                    context.startActivity(Intent.createChooser(shareIntent, "Share App"))
+                    context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_app_chooser)))
                 },
             )
             SettingsRow(
                 icon = Icons.Outlined.StarRate,
-                title = "Rate this App",
-                subtitle = "Leave a review on the Play Store",
+                title = stringResource(R.string.setting_rate_app),
+                subtitle = stringResource(R.string.rate_app_subtitle),
                 onClick = {
                     onTrackEvent("rate_app")
                     try {
@@ -253,10 +255,10 @@ fun MoreScreen(
             )
 
             // ABOUT
-            SectionHeader("About")
+            SectionHeader(stringResource(R.string.section_about))
             SettingsRow(
                 icon = Icons.Outlined.Language,
-                title = "Website",
+                title = stringResource(R.string.setting_website),
                 subtitle = "sdahymnalyoruba.com",
                 onClick = {
                     context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://sdahymnalyoruba.com")))
@@ -264,7 +266,7 @@ fun MoreScreen(
             )
             SettingsRow(
                 icon = Icons.Outlined.Email,
-                title = "Contact",
+                title = stringResource(R.string.setting_contact),
                 subtitle = "support@sdahymnalyoruba.com",
                 onClick = {
                     context.startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:support@sdahymnalyoruba.com")))
@@ -272,7 +274,7 @@ fun MoreScreen(
             )
             SettingsRow(
                 icon = Icons.Outlined.Code,
-                title = "GitHub",
+                title = stringResource(R.string.setting_github),
                 subtitle = "fisayoafolayan/sdahymnalyorubaandroid",
                 onClick = {
                     context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/fisayoafolayan/sdahymnalyorubaandroid")))
@@ -280,13 +282,13 @@ fun MoreScreen(
             )
             SettingsRow(
                 icon = Icons.Outlined.Info,
-                title = "Version",
+                title = stringResource(R.string.setting_version),
                 subtitle = context.packageManager
                     .getPackageInfo(context.packageName, 0).versionName ?: "1.0.0",
             )
             SettingsRow(
                 icon = Icons.Outlined.Policy,
-                title = "Privacy Policy",
+                title = stringResource(R.string.setting_privacy),
                 subtitle = "sdahymnalyoruba.com/privacy",
                 onClick = {
                     context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://sdahymnalyoruba.com/privacy")))
@@ -296,7 +298,7 @@ fun MoreScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = "\u00A9 ${java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)} SDA Hymnal Yoruba",
+                text = stringResource(R.string.copyright_format, java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)),
                 style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f),
                 modifier = Modifier.padding(horizontal = 16.dp),
