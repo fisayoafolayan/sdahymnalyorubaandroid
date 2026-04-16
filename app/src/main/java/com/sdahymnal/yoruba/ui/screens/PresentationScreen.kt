@@ -2,6 +2,7 @@ package com.sdahymnal.yoruba.ui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -11,9 +12,8 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,9 +36,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -143,6 +145,11 @@ fun PresentationScreen(
             .fillMaxSize()
             .background(bgColor)
             .pointerInput(Unit) {
+                detectTapGestures {
+                    if (currentIndex < slides.size - 1) currentIndex++
+                }
+            }
+            .pointerInput(Unit) {
                 var totalDrag = 0f
                 detectHorizontalDragGestures(
                     onDragEnd = {
@@ -153,12 +160,6 @@ fun PresentationScreen(
                     onDragCancel = { totalDrag = 0f },
                     onHorizontalDrag = { _, dragAmount -> totalDrag += dragAmount },
                 )
-            }
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-            ) {
-                if (currentIndex < slides.size - 1) currentIndex++
             },
     ) {
         // Corner decorations
@@ -198,8 +199,10 @@ fun PresentationScreen(
         AnimatedContent(
             targetState = currentIndex,
             transitionSpec = {
-                (fadeIn() + slideInHorizontally { it / 4 })
-                    .togetherWith(fadeOut() + slideOutHorizontally { -it / 4 })
+                val forward = targetState > initialState
+                val sign = if (forward) 1 else -1
+                (fadeIn() + slideInHorizontally { sign * it / 4 })
+                    .togetherWith(fadeOut() + slideOutHorizontally { -sign * it / 4 })
             },
             label = "slide",
             modifier = Modifier.fillMaxSize(),
@@ -397,6 +400,24 @@ private fun TitleSlide(hymn: Hymn, titleSize: androidx.compose.ui.unit.TextUnit)
 }
 
 @Composable
+private fun StaggeredLine(
+    index: Int,
+    content: @Composable () -> Unit,
+) {
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(index * 80L)
+        visible = true
+    }
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(tween(durationMillis = 300, easing = androidx.compose.animation.core.EaseOut)),
+    ) {
+        content()
+    }
+}
+
+@Composable
 private fun LyricsSlide(
     block: com.sdahymnal.yoruba.data.LyricBlock,
     fontSize: androidx.compose.ui.unit.TextUnit,
@@ -418,23 +439,25 @@ private fun LyricsSlide(
                 "call_response" -> "CALL & RESPONSE ${block.index}"
                 else -> ""
             }
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(StageLabelBg)
-                    .border(1.dp, StageLabelBorder, RoundedCornerShape(6.dp))
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
-            ) {
-                Text(
-                    text = label,
-                    style = TextStyle(
-                        fontFamily = NotoSerif,
-                        fontSize = 11.sp,
-                        letterSpacing = 1.5.sp,
-                        fontWeight = FontWeight.Bold,
-                    ),
-                    color = if (isChorus) StageChorusText else PurpleLight,
-                )
+            StaggeredLine(index = 0) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(StageLabelBg)
+                        .border(1.dp, StageLabelBorder, RoundedCornerShape(6.dp))
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                ) {
+                    Text(
+                        text = label,
+                        style = TextStyle(
+                            fontFamily = NotoSerif,
+                            fontSize = 11.sp,
+                            letterSpacing = 1.5.sp,
+                            fontWeight = FontWeight.Bold,
+                        ),
+                        color = if (isChorus) StageChorusText else PurpleLight,
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -442,48 +465,54 @@ private fun LyricsSlide(
             val textColor = if (isChorus) StageChorusText else StageText
 
             if (isCallResponse) {
-                block.callResponseLines.forEach { line ->
+                block.callResponseLines.forEachIndexed { i, line ->
                     val partLabel = when (line.part) {
                         "leader" -> "Leader / L\u00edl\u00e9"
                         "congregation" -> "All / \u1eb8gb\u1eb9\u0301"
                         else -> line.part
                     }
-                    Text(
-                        text = partLabel,
-                        style = TextStyle(
-                            fontFamily = NotoSerif,
-                            fontSize = 12.sp,
-                            letterSpacing = 1.sp,
-                            fontWeight = FontWeight.Bold,
-                        ),
-                        color = PurpleLight.copy(alpha = 0.7f),
-                    )
-                    Text(
-                        text = line.text,
-                        style = TextStyle(
-                            fontFamily = NotoSerif,
-                            fontSize = fontSize,
-                            lineHeight = fontSize * 1.58f,
-                            fontStyle = if (line.part == "congregation") FontStyle.Italic else FontStyle.Normal,
-                        ),
-                        color = textColor,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(bottom = 16.dp),
-                    )
+                    StaggeredLine(index = i + 1) {
+                        Column {
+                            Text(
+                                text = partLabel,
+                                style = TextStyle(
+                                    fontFamily = NotoSerif,
+                                    fontSize = 12.sp,
+                                    letterSpacing = 1.sp,
+                                    fontWeight = FontWeight.Bold,
+                                ),
+                                color = PurpleLight.copy(alpha = 0.7f),
+                            )
+                            Text(
+                                text = line.text,
+                                style = TextStyle(
+                                    fontFamily = NotoSerif,
+                                    fontSize = fontSize,
+                                    lineHeight = fontSize * 1.58f,
+                                    fontStyle = if (line.part == "congregation") FontStyle.Italic else FontStyle.Normal,
+                                ),
+                                color = textColor,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(bottom = 16.dp),
+                            )
+                        }
+                    }
                 }
             } else {
-                block.textLines.forEach { line ->
-                    Text(
-                        text = line,
-                        style = TextStyle(
-                            fontFamily = NotoSerif,
-                            fontSize = fontSize,
-                            lineHeight = fontSize * 1.58f,
-                        ),
-                        color = textColor,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(bottom = 6.dp),
-                    )
+                block.textLines.forEachIndexed { i, line ->
+                    StaggeredLine(index = i + 1) {
+                        Text(
+                            text = line,
+                            style = TextStyle(
+                                fontFamily = NotoSerif,
+                                fontSize = fontSize,
+                                lineHeight = fontSize * 1.58f,
+                            ),
+                            color = textColor,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(bottom = 6.dp),
+                        )
+                    }
                 }
             }
         }
