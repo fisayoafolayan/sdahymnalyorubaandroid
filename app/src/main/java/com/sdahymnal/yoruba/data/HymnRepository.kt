@@ -19,12 +19,11 @@ sealed class HymnLoadState {
     data class Error(val message: String) : HymnLoadState()
 }
 
-class HymnRepository(private val context: Context) {
+class HymnRepository(private val context: Context, private val preferences: Preferences) {
 
     private val json = Json { ignoreUnknownKeys = true }
     private val cacheFile = File(context.filesDir, "hymns_cache.json")
     private val cacheTempFile = File(context.filesDir, "hymns_cache.json.tmp")
-    private val preferences = Preferences(context)
 
     // Reuses shared connection pool and dispatcher from HttpClient.base
     private val client = HttpClient.base

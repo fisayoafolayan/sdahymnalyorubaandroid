@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val preferences = Preferences(application)
-    private val repository = HymnRepository(application)
+    private val repository = HymnRepository(application, preferences)
 
     // --- Hymn data ---
     val loadState: StateFlow<HymnLoadState> = repository.state
