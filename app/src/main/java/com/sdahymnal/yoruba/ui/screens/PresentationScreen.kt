@@ -169,14 +169,29 @@ fun PresentationScreen(
 
         // Hint text (only on title slide)
         if (currentIndex == 0) {
-            Text(
-                text = "swipe or tap to advance",
-                style = TextStyle(fontFamily = NotoSerif, fontSize = 11.sp),
-                color = StageText.copy(alpha = 0.25f),
+            val isPortrait = LocalConfiguration.current.orientation ==
+                android.content.res.Configuration.ORIENTATION_PORTRAIT
+
+            Column(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(end = 20.dp, bottom = 72.dp),
-            )
+                horizontalAlignment = Alignment.End,
+            ) {
+                if (isPortrait) {
+                    Text(
+                        text = "rotate for best projection",
+                        style = TextStyle(fontFamily = NotoSerif, fontSize = 11.sp),
+                        color = StageText.copy(alpha = 0.25f),
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
+                Text(
+                    text = "swipe or tap to advance",
+                    style = TextStyle(fontFamily = NotoSerif, fontSize = 11.sp),
+                    color = StageText.copy(alpha = 0.25f),
+                )
+            }
         }
 
         // Slide content
