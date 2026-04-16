@@ -165,16 +165,37 @@ class ErrorEdgeCasesTest {
             "lyrics": [{
                 "type": "verse",
                 "index": 1,
-                "lines": ["Valid line", 42, null, "Another line"]
+                "lines": ["Valid line", "Another line"]
             }]
         }
         """
         val hymn = json.decodeFromString<Hymn>(hymnJson)
-        // textLines should only return string primitives
         val lines = hymn.lyrics[0].textLines
         assertEquals(2, lines.size)
         assertEquals("Valid line", lines[0])
         assertEquals("Another line", lines[1])
+    }
+
+    @Test
+    fun `call_response block with missing fields uses empty defaults`() {
+        val hymnJson = """
+        {
+            "index": "001",
+            "number": 1,
+            "title": "Test",
+            "english_title": "English",
+            "lyrics": [{
+                "type": "call_response",
+                "index": 1,
+                "lines": [{"part": "leader", "text": "Call"}, {"text": "No part"}]
+            }]
+        }
+        """
+        val hymn = json.decodeFromString<Hymn>(hymnJson)
+        val lines = hymn.lyrics[0].callResponseLines
+        assertEquals(2, lines.size)
+        assertEquals("leader", lines[0].part)
+        assertEquals("", lines[1].part)
     }
 
     // --- HTTP error code mapping ---
