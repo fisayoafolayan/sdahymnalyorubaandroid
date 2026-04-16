@@ -304,10 +304,10 @@ private fun HymnContent(
                 .clip(RoundedCornerShape(24.dp))
                 .clickable {
                     onShare()
-                    val url = "https://sdahymnalyoruba.com/?hymn=${hymn.number}"
+                    val shareText = "Hymn ${hymn.number}: ${hymn.title}\nhttps://sdahymnalyoruba.com/?hymn=${hymn.number}"
                     val sendIntent = Intent().apply {
                         action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, url)
+                        putExtra(Intent.EXTRA_TEXT, shareText)
                         type = "text/plain"
                     }
                     context.startActivity(
