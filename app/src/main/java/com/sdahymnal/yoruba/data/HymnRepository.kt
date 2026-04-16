@@ -75,6 +75,7 @@ class HymnRepository(private val context: Context, private val preferences: Pref
 
         val isDigits = normalised.all { it.isDigit() }
         val words = normalised.split(' ').filter { it.isNotEmpty() }
+        val spaceless = normalised.replace(" ", "")
 
         // Snapshot the index once so a concurrent swap can't affect this search
         val entries = index.searchEntries
@@ -88,20 +89,20 @@ class HymnRepository(private val context: Context, private val preferences: Pref
             } else if (isDigits && entry.number.startsWith(normalised)) {
                 score = 90
             }
-            val titleQ = entry.title.matchQuality(normalised, words)
+            val titleQ = entry.title.matchQuality(normalised, spaceless, words)
             if (titleQ == 2) score = maxOf(score, 80)
             else if (titleQ == 1) score = maxOf(score, 75)
 
-            val engQ = entry.englishTitle.matchQuality(normalised, words)
+            val engQ = entry.englishTitle.matchQuality(normalised, spaceless, words)
             if (engQ == 2) score = maxOf(score, 70)
             else if (engQ == 1) score = maxOf(score, 65)
 
-            val refsQ = entry.refs.matchQuality(normalised, words)
+            val refsQ = entry.refs.matchQuality(normalised, spaceless, words)
             if (refsQ == 2) score = maxOf(score, 60)
             else if (refsQ == 1) score = maxOf(score, 55)
 
             if (score == 0) {
-                val lyricsQ = entry.lyrics.matchQuality(normalised, words)
+                val lyricsQ = entry.lyrics.matchQuality(normalised, spaceless, words)
                 if (lyricsQ == 2) score = 40
                 else if (lyricsQ == 1) score = 35
             }
@@ -113,10 +114,12 @@ class HymnRepository(private val context: Context, private val preferences: Pref
         return results.map { it.first }
     }
 
-    /** Match quality: 2 = exact substring, 1 = all words present, 0 = no match. */
-    private fun String.matchQuality(full: String, words: List<String>): Int {
+    /** Match quality: 2 = exact/spaceless substring, 1 = all words present, 0 = no match. */
+    private fun String.matchQuality(full: String, spaceless: String, words: List<String>): Int {
         if (contains(full)) return 2
-        if (words.size > 1 && words.all { contains(it) }) return 1
+        val noSpaces = replace(" ", "")
+        if (noSpaces.contains(spaceless)) return 2
+        if (words.size > 1 && words.all { contains(it) || noSpaces.contains(it) }) return 1
         return 0
     }
 
