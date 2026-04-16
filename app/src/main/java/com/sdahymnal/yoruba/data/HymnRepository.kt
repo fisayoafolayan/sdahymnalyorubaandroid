@@ -31,9 +31,14 @@ class HymnRepository(private val context: Context, private val preferences: Pref
     private val _state = MutableStateFlow<HymnLoadState>(HymnLoadState.Loading)
     val state: StateFlow<HymnLoadState> = _state
 
-    // Pre-built search index and number lookup
-    private var searchIndex: List<SearchEntry> = emptyList()
-    private var hymnsByNumber: Map<Int, Hymn> = emptyMap()
+    // Pre-built search index and number lookup, swapped atomically
+    private data class HymnIndex(
+        val searchEntries: List<SearchEntry> = emptyList(),
+        val byNumber: Map<Int, Hymn> = emptyMap(),
+    )
+
+    @Volatile
+    private var index: HymnIndex = HymnIndex()
 
     val hymns: List<Hymn>
         get() = (_state.value as? HymnLoadState.Ready)?.hymns.orEmpty()
@@ -42,8 +47,7 @@ class HymnRepository(private val context: Context, private val preferences: Pref
         val cached = loadFromCache()
         if (cached != null) {
             _state.value = HymnLoadState.Ready(cached)
-            searchIndex = buildIndex(cached)
-            hymnsByNumber = cached.associateBy { it.number }
+            index = HymnIndex(buildIndex(cached), cached.associateBy { it.number })
         } else {
             _state.value = HymnLoadState.Loading
         }
@@ -52,8 +56,7 @@ class HymnRepository(private val context: Context, private val preferences: Pref
             val fresh = fetchFromNetwork()
             if (fresh != null) {
                 _state.value = HymnLoadState.Ready(fresh)
-                searchIndex = buildIndex(fresh)
-                hymnsByNumber = fresh.associateBy { it.number }
+                index = HymnIndex(buildIndex(fresh), fresh.associateBy { it.number })
             }
         } catch (e: Exception) {
             if (cached == null) {
@@ -71,10 +74,11 @@ class HymnRepository(private val context: Context, private val preferences: Pref
 
         val isDigits = normalised.all { it.isDigit() }
 
-        // Reuse a mutable list to avoid allocations
-        val results = ArrayList<Pair<Hymn, Int>>(searchIndex.size / 4)
+        // Snapshot the index once so a concurrent swap can't affect this search
+        val entries = index.searchEntries
+        val results = ArrayList<Pair<Hymn, Int>>(entries.size / 4)
 
-        for (entry in searchIndex) {
+        for (entry in entries) {
             var score = 0
 
             if (entry.number == normalised) {
@@ -94,7 +98,7 @@ class HymnRepository(private val context: Context, private val preferences: Pref
         return results.map { it.first }
     }
 
-    fun getByNumber(number: Int): Hymn? = hymnsByNumber[number]
+    fun getByNumber(number: Int): Hymn? = index.byNumber[number]
 
     private fun buildIndex(hymns: List<Hymn>): List<SearchEntry> = hymns.map { hymn ->
         val lyrics = hymn.lyrics.joinToString(" ") { block ->
