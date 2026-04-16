@@ -1,8 +1,10 @@
 package com.sdahymnal.yoruba.data
 
 import com.sdahymnal.yoruba.BuildConfig
+import io.sentry.Sentry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -22,13 +24,17 @@ object Analytics {
     private val WEBSITE_ID = BuildConfig.ANALYTICS_WEBSITE_ID
     private val HOSTNAME = BuildConfig.ANALYTICS_HOSTNAME
 
-    // Derives from shared base - reuses connection pool and dispatcher,
     private val client = HttpClient.base.newBuilder()
         .connectTimeout(5, TimeUnit.SECONDS)
         .readTimeout(5, TimeUnit.SECONDS)
         .build()
 
-    private val scope = CoroutineScope(kotlinx.coroutines.SupervisorJob() + Dispatchers.IO)
+    private val USER_AGENT =
+        "Mozilla/5.0 (Linux; Android ${android.os.Build.VERSION.RELEASE}; " +
+        "${android.os.Build.MODEL}) AppleWebKit/537.36 (KHTML, like Gecko) " +
+        "Chrome/120.0.0.0 Mobile Safari/537.36 SDAHymnalYoruba/1.0"
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val json = "application/json".toMediaType()
 
     fun trackPageView(url: String) {
@@ -60,11 +66,11 @@ object Analytics {
                 val request = Request.Builder()
                     .url(ENDPOINT)
                     .post(body.toRequestBody(json))
-                    .header("User-Agent", "SDAHymnalYoruba-Android/1.0")
+                    .header("User-Agent", USER_AGENT)
                     .build()
                 client.newCall(request).execute().close()
             } catch (e: Exception) {
-                io.sentry.Sentry.captureException(e)
+                Sentry.captureException(e)
             }
         }
     }
