@@ -65,7 +65,6 @@ object Routes {
 fun HymnNavGraph(
     navController: NavHostController,
     viewModel: MainViewModel,
-    deepLinkHymn: Int = -1,
 ) {
     val loadState by viewModel.loadState.collectAsState()
     val selectedHymnNumber by viewModel.selectedHymnNumber.collectAsState()
@@ -91,15 +90,24 @@ fun HymnNavGraph(
         is HymnLoadState.Ready -> {
             val hymns = state.hymns
 
+            // Restore last hymn on first load
             LaunchedEffect(Unit) {
-                val targetHymn = when {
-                    deepLinkHymn > 0 -> deepLinkHymn
-                    viewModel.lastHymn > 0 -> viewModel.lastHymn
-                    else -> -1
+                val lastHymn = viewModel.lastHymn
+                if (lastHymn > 0 && viewModel.getByNumber(lastHymn) != null) {
+                    viewModel.selectHymn(lastHymn)
+                    navController.navigate(Routes.hymnDetail(lastHymn))
                 }
-                if (targetHymn > 0 && viewModel.getByNumber(targetHymn) != null) {
-                    viewModel.selectHymn(targetHymn)
-                    navController.navigate(Routes.hymnDetail(targetHymn))
+            }
+
+            // Navigate on deep link (works for both initial launch and onNewIntent)
+            val pendingDeepLink by viewModel.pendingDeepLink.collectAsState()
+            LaunchedEffect(pendingDeepLink) {
+                if (pendingDeepLink > 0 && viewModel.getByNumber(pendingDeepLink) != null) {
+                    viewModel.selectHymn(pendingDeepLink)
+                    navController.navigate(Routes.hymnDetail(pendingDeepLink)) {
+                        launchSingleTop = true
+                    }
+                    viewModel.consumeDeepLink()
                 }
             }
 

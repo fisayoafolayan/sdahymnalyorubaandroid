@@ -127,6 +127,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getByNumber(number: Int): Hymn? = repository.getByNumber(number)
 
+    // --- Deep links ---
+    private val _pendingDeepLink = MutableStateFlow(-1)
+    val pendingDeepLink: StateFlow<Int> = _pendingDeepLink
+
+    fun setDeepLink(hymnNumber: Int) {
+        if (hymnNumber > 0) _pendingDeepLink.value = hymnNumber
+    }
+
+    fun consumeDeepLink() {
+        _pendingDeepLink.value = -1
+    }
+
     // --- Data loading ---
     fun load() {
         viewModelScope.launch { repository.load() }

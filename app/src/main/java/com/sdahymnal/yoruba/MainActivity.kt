@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val deepLinkHymn = parseHymnFromIntent(intent)
+        viewModel.setDeepLink(parseHymnFromIntent(intent))
 
         setContent {
             val themeMode by viewModel.themeMode.collectAsState()
@@ -30,7 +30,6 @@ class MainActivity : ComponentActivity() {
                 HymnNavGraph(
                     navController = navController,
                     viewModel = viewModel,
-                    deepLinkHymn = deepLinkHymn,
                 )
             }
         }
@@ -39,6 +38,7 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        viewModel.setDeepLink(parseHymnFromIntent(intent))
     }
 
     private fun parseHymnFromIntent(intent: Intent?): Int {
