@@ -40,10 +40,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.ui.platform.LocalConfiguration
@@ -171,6 +174,8 @@ fun HymnDetailScreen(
             )
         },
     ) { padding ->
+        var dragOffset by remember { mutableFloatStateOf(0f) }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -178,18 +183,28 @@ fun HymnDetailScreen(
                 .pointerInput(hasPrevious, hasNext) {
                     var totalDrag = 0f
                     detectHorizontalDragGestures(
+                        onDragStart = { dragOffset = 0f; totalDrag = 0f },
                         onDragEnd = {
-                            if (totalDrag < -60 && hasNext) {
-                                onNext()
-                            } else if (totalDrag > 60 && hasPrevious) {
-                                onPrevious()
+                            when {
+                                totalDrag < -60 && hasNext -> onNext()
+                                totalDrag > 60 && hasPrevious -> onPrevious()
                             }
+                            dragOffset = 0f
                             totalDrag = 0f
                         },
-                        onDragCancel = { totalDrag = 0f },
-                        onHorizontalDrag = { _, dragAmount -> totalDrag += dragAmount },
+                        onDragCancel = { dragOffset = 0f; totalDrag = 0f },
+                        onHorizontalDrag = { _, dragAmount ->
+                            totalDrag += dragAmount
+                            // Rubber-band at boundaries, full follow otherwise
+                            dragOffset += when {
+                                dragAmount < 0 && !hasNext -> dragAmount * 0.3f
+                                dragAmount > 0 && !hasPrevious -> dragAmount * 0.3f
+                                else -> dragAmount
+                            }
+                        },
                     )
-                },
+                }
+                .graphicsLayer { translationX = dragOffset },
         ) {
             HymnContent(
                 hymn = hymn,
