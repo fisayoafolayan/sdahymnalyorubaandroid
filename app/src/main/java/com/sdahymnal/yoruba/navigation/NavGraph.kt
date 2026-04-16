@@ -81,6 +81,17 @@ fun HymnNavGraph(
     val currentRoute = navBackStackEntry?.destination?.route
     val showBottomBar = currentRoute != Routes.PRESENTATION
 
+    // Derive selected tab from navigation state (not during composition)
+    LaunchedEffect(currentRoute) {
+        when (currentRoute) {
+            Routes.HYMN_LIST -> selectedTab = BottomTab.Hymns
+            Routes.CATEGORIES, Routes.CATEGORY_DETAIL -> selectedTab = BottomTab.Categories
+            Routes.FAVORITES -> selectedTab = BottomTab.Favorites
+            Routes.MORE -> selectedTab = BottomTab.More
+            // Detail/presentation routes keep the current tab
+        }
+    }
+
     when (val state = loadState) {
         is HymnLoadState.Loading -> LoadingScreen()
         is HymnLoadState.Error -> ErrorScreen(
@@ -116,7 +127,6 @@ fun HymnNavGraph(
                 currentRoute == Routes.FAVORITES ||
                 currentRoute == Routes.MORE
             BackHandler(enabled = onNonHymnTab) {
-                selectedTab = BottomTab.Hymns
                 navController.navigate(Routes.HYMN_LIST) {
                     popUpTo(Routes.HYMN_LIST) { inclusive = false }
                     launchSingleTop = true
@@ -149,7 +159,6 @@ fun HymnNavGraph(
                     popExitTransition = { fadeOut(tween(150)) + slideOutHorizontally(tween(200)) { it / 6 } },
                 ) {
                     composable(Routes.HYMN_LIST) {
-                        selectedTab = BottomTab.Hymns
                         HymnListScreen(
                             hymns = hymns,
                             selectedHymnNumber = selectedHymnNumber,
@@ -167,7 +176,6 @@ fun HymnNavGraph(
                     }
 
                     composable(Routes.CATEGORIES) {
-                        selectedTab = BottomTab.Categories
                         CategoriesScreen(
                             hymns = hymns,
                             favorites = favorites,
@@ -203,7 +211,6 @@ fun HymnNavGraph(
                     }
 
                     composable(Routes.FAVORITES) {
-                        selectedTab = BottomTab.Favorites
                         FavoritesScreen(
                             favoriteHymns = hymns.filter { it.number in favorites },
                             selectedHymnNumber = selectedHymnNumber,
@@ -213,7 +220,6 @@ fun HymnNavGraph(
                             },
                             onToggleFavorite = { viewModel.toggleFavorite(it) },
                             onBrowseHymns = {
-                                selectedTab = BottomTab.Hymns
                                 navController.navigate(Routes.HYMN_LIST) {
                                     popUpTo(Routes.HYMN_LIST) { inclusive = false }
                                     launchSingleTop = true
@@ -224,7 +230,6 @@ fun HymnNavGraph(
 
 
                     composable(Routes.MORE) {
-                        selectedTab = BottomTab.More
                         MoreScreen(
                             themeMode = themeMode,
                             hymnCount = hymns.size,
@@ -311,7 +316,6 @@ fun HymnNavGraph(
                             }
                             // Skip if already on this exact route
                             if (currentRoute == route) return@BottomNavBar
-                            selectedTab = tab
                             navController.navigate(route) {
                                 popUpTo(Routes.HYMN_LIST) { inclusive = false }
                                 launchSingleTop = true
