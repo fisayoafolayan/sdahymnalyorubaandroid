@@ -17,10 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BrightnessAuto
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Email
@@ -35,7 +31,6 @@ import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.StarRate
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -60,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sdahymnal.yoruba.R
 import com.sdahymnal.yoruba.ui.components.BrandHeader
+import com.sdahymnal.yoruba.ui.components.ThemeMenuItems
 import com.sdahymnal.yoruba.ui.theme.FavoriteHeart
 
 @Composable
@@ -154,35 +150,13 @@ fun MoreScreen(
                     onDismissRequest = { showThemeMenu = false },
                     offset = DpOffset(x = 56.dp, y = (-48).dp),
                 ) {
-                    listOf(
-                        Triple("light", stringResource(R.string.theme_light), Icons.Default.LightMode),
-                        Triple("dark", stringResource(R.string.theme_dark), Icons.Default.DarkMode),
-                        Triple("system", stringResource(R.string.theme_system), Icons.Default.BrightnessAuto),
-                    ).forEach { (mode, label, icon) ->
-                        DropdownMenuItem(
-                            text = { Text(label) },
-                            onClick = {
-                                showThemeMenu = false
-                                onSetTheme(mode)
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = icon,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            },
-                            trailingIcon = {
-                                if (themeMode == mode) {
-                                    Icon(
-                                        imageVector = Icons.Default.Check,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary,
-                                    )
-                                }
-                            },
-                        )
-                    }
+                    ThemeMenuItems(
+                        currentMode = themeMode,
+                        onSelect = {
+                            showThemeMenu = false
+                            onSetTheme(it)
+                        },
+                    )
                 }
             }
             SettingsRow(

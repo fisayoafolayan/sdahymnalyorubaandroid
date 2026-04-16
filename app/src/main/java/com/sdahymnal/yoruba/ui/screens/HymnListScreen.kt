@@ -15,12 +15,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BrightnessAuto
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.outlined.SearchOff
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -44,6 +42,7 @@ import com.sdahymnal.yoruba.data.Hymn
 import com.sdahymnal.yoruba.ui.components.BrandHeader
 import com.sdahymnal.yoruba.ui.components.HymnRow
 import com.sdahymnal.yoruba.ui.components.HymnSearchBar
+import com.sdahymnal.yoruba.ui.components.ThemeMenuItems
 
 @Composable
 fun HymnListScreen(
@@ -103,35 +102,13 @@ fun HymnListScreen(
                             expanded = showThemeMenu,
                             onDismissRequest = { showThemeMenu = false },
                         ) {
-                            listOf(
-                                Triple("light", stringResource(R.string.theme_light), Icons.Default.LightMode),
-                                Triple("dark", stringResource(R.string.theme_dark), Icons.Default.DarkMode),
-                                Triple("system", stringResource(R.string.theme_system), Icons.Default.BrightnessAuto),
-                            ).forEach { (mode, label, icon) ->
-                                DropdownMenuItem(
-                                    text = { Text(label) },
-                                    onClick = {
-                                        showThemeMenu = false
-                                        onSetTheme(mode)
-                                    },
-                                    leadingIcon = {
-                                        Icon(
-                                            imageVector = icon,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        )
-                                    },
-                                    trailingIcon = {
-                                        if (themeMode == mode) {
-                                            Icon(
-                                                imageVector = Icons.Default.Check,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary,
-                                            )
-                                        }
-                                    },
-                                )
-                            }
+                            ThemeMenuItems(
+                                currentMode = themeMode,
+                                onSelect = {
+                                    showThemeMenu = false
+                                    onSetTheme(it)
+                                },
+                            )
                         }
                     }
                 },
