@@ -49,8 +49,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -93,7 +94,9 @@ fun PresentationScreen(
     onFontSizeChange: (Float) -> Unit = {},
 ) {
     val view = LocalView.current
-    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val screenWidthPx = LocalWindowInfo.current.containerSize.width
+    val density = LocalDensity.current
+    val screenWidth = with(density) { screenWidthPx.toDp().value }
 
     val activity = view.context.findActivity()
     DisposableEffect(Unit) {
@@ -176,8 +179,8 @@ fun PresentationScreen(
 
         // Hint text (only on title slide)
         if (currentIndex == 0) {
-            val isPortrait = LocalConfiguration.current.orientation ==
-                android.content.res.Configuration.ORIENTATION_PORTRAIT
+            val containerSize = LocalWindowInfo.current.containerSize
+            val isPortrait = containerSize.height > containerSize.width
 
             Column(
                 modifier = Modifier
