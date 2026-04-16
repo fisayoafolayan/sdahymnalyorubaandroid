@@ -32,3 +32,26 @@ fun makeTestHymn(
     }
     """)
 }
+
+fun makeTestHymnWithVerses(
+    number: Int,
+    title: String,
+    englishTitle: String = "English $number",
+    verses: List<List<String>>,
+): Hymn {
+    val blocksJson = verses.mapIndexed { i, lines ->
+        val linesJson = lines.joinToString(",") { "\"$it\"" }
+        """{"type":"verse","index":${i + 1},"lines":[$linesJson]}"""
+    }.joinToString(",")
+
+    return json.decodeFromString<Hymn>("""
+    {
+        "index": "${number.toString().padStart(3, '0')}",
+        "number": $number,
+        "title": "$title",
+        "english_title": "$englishTitle",
+        "references": {},
+        "lyrics": [$blocksJson]
+    }
+    """)
+}
