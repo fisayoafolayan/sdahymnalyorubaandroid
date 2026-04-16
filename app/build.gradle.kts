@@ -20,14 +20,22 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Inject Sentry DSN from local.properties (keeps it out of version control)
+        // Load local.properties for optional overrides
         val localProps = rootProject.file("local.properties")
-        val sentryDsn = if (localProps.exists()) {
-            val props = Properties()
-            props.load(localProps.inputStream())
-            props.getProperty("sentry.dsn", "")
-        } else ""
-        manifestPlaceholders["sentryDsn"] = sentryDsn
+        val props = if (localProps.exists()) {
+            Properties().apply { load(localProps.inputStream()) }
+        } else Properties()
+
+        // Inject Sentry DSN (keeps it out of version control)
+        manifestPlaceholders["sentryDsn"] = props.getProperty("sentry.dsn", "")
+
+        // Analytics config — defaults can be overridden in local.properties
+        buildConfigField("String", "ANALYTICS_ENDPOINT",
+            "\"${props.getProperty("analytics.endpoint", "https://analytics.afolayan.com/api/send")}\"")
+        buildConfigField("String", "ANALYTICS_WEBSITE_ID",
+            "\"${props.getProperty("analytics.website_id", "20dd9029-2ed1-4919-a60d-ae74d89795c1")}\"")
+        buildConfigField("String", "ANALYTICS_HOSTNAME",
+            "\"${props.getProperty("analytics.hostname", "android.sdahymnalyoruba.com")}\"")
 
         vectorDrawables {
             useSupportLibrary = true
@@ -72,6 +80,7 @@ android {
     }
 
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 

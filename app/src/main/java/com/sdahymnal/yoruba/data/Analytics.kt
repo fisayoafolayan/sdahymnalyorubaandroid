@@ -1,5 +1,6 @@
 package com.sdahymnal.yoruba.data
 
+import com.sdahymnal.yoruba.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,12 +14,13 @@ import java.util.concurrent.TimeUnit
 /**
  * Lightweight Umami analytics client.
  * Sends events to the same Umami instance as the web app.
+ * Endpoint, website ID, and hostname are configurable via local.properties.
  */
 object Analytics {
 
-    private const val ENDPOINT = "https://analytics.afolayan.com/api/send"
-    private const val WEBSITE_ID = "20dd9029-2ed1-4919-a60d-ae74d89795c1"
-    private const val HOSTNAME = "android.sdahymnalyoruba.com"
+    private val ENDPOINT = BuildConfig.ANALYTICS_ENDPOINT
+    private val WEBSITE_ID = BuildConfig.ANALYTICS_WEBSITE_ID
+    private val HOSTNAME = BuildConfig.ANALYTICS_HOSTNAME
 
     // Derives from shared base - reuses connection pool and dispatcher,
     private val client = HttpClient.base.newBuilder()
