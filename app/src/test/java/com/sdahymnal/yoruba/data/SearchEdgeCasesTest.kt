@@ -36,13 +36,15 @@ class SearchEdgeCasesTest {
         if (normalised.isEmpty()) return hymnList
 
         val isDigits = normalised.all { it.isDigit() }
+        val words = normalised.split(' ').filter { it.isNotEmpty() }
+        val spaceless = normalised.replace(" ", "")
 
         data class SearchEntry(
             val hymn: Hymn,
             val number: String,
-            val title: String,
-            val englishTitle: String,
-            val lyrics: String,
+            val title: String, val titleSpaceless: String,
+            val englishTitle: String, val englishTitleSpaceless: String,
+            val lyrics: String, val lyricsSpaceless: String,
         )
 
         val index = hymnList.map { hymn ->
@@ -52,13 +54,23 @@ class SearchEdgeCasesTest {
                     else -> block.textLines.joinToString(" ")
                 }
             }
+            val normTitle = HymnRepository.removeDiacritics(hymn.title)
+            val normEng = HymnRepository.removeDiacritics(hymn.englishTitle)
+            val normLyrics = HymnRepository.removeDiacritics(lyrics)
             SearchEntry(
                 hymn = hymn,
                 number = hymn.number.toString(),
-                title = HymnRepository.removeDiacritics(hymn.title),
-                englishTitle = HymnRepository.removeDiacritics(hymn.englishTitle),
-                lyrics = HymnRepository.removeDiacritics(lyrics),
+                title = normTitle, titleSpaceless = normTitle.replace(" ", ""),
+                englishTitle = normEng, englishTitleSpaceless = normEng.replace(" ", ""),
+                lyrics = normLyrics, lyricsSpaceless = normLyrics.replace(" ", ""),
             )
+        }
+
+        fun matchQuality(text: String, textSp: String): Int {
+            if (text.contains(normalised)) return 2
+            if (textSp.contains(spaceless)) return 2
+            if (words.size > 1 && words.all { text.contains(it) || textSp.contains(it) }) return 1
+            return 0
         }
 
         val results = ArrayList<Pair<Hymn, Int>>()
@@ -66,9 +78,21 @@ class SearchEdgeCasesTest {
             var score = 0
             if (entry.number == normalised) score = 100
             else if (isDigits && entry.number.startsWith(normalised)) score = 90
-            if (entry.title.contains(normalised)) score = maxOf(score, 80)
-            if (entry.englishTitle.contains(normalised)) score = maxOf(score, 70)
-            if (score == 0 && entry.lyrics.contains(normalised)) score = 40
+
+            val titleQ = matchQuality(entry.title, entry.titleSpaceless)
+            if (titleQ == 2) score = maxOf(score, 80)
+            else if (titleQ == 1) score = maxOf(score, 75)
+
+            val engQ = matchQuality(entry.englishTitle, entry.englishTitleSpaceless)
+            if (engQ == 2) score = maxOf(score, 70)
+            else if (engQ == 1) score = maxOf(score, 65)
+
+            if (score == 0) {
+                val lyricsQ = matchQuality(entry.lyrics, entry.lyricsSpaceless)
+                if (lyricsQ == 2) score = 40
+                else if (lyricsQ == 1) score = 35
+            }
+
             if (score > 0) results.add(entry.hymn to score)
         }
 

@@ -62,20 +62,22 @@ class SearchScoringTest {
         return json.decodeFromString<Hymn>(jsonStr)
     }
 
-    // Simulate search logic from HymnRepository
+    // Simulate search logic from HymnRepository (must match actual implementation)
     private fun search(query: String, hymnList: List<Hymn>): List<Hymn> {
         val normalised = HymnRepository.removeDiacritics(query.trim())
         if (normalised.isEmpty()) return hymnList
 
         val isDigits = normalised.all { it.isDigit() }
+        val words = normalised.split(' ').filter { it.isNotEmpty() }
+        val spaceless = normalised.replace(" ", "")
 
         data class SearchEntry(
             val hymn: Hymn,
             val number: String,
-            val title: String,
-            val englishTitle: String,
-            val refs: String,
-            val lyrics: String,
+            val title: String, val titleSpaceless: String,
+            val englishTitle: String, val englishTitleSpaceless: String,
+            val refs: String, val refsSpaceless: String,
+            val lyrics: String, val lyricsSpaceless: String,
         )
 
         val index = hymnList.map { hymn ->
@@ -86,14 +88,25 @@ class SearchScoringTest {
                 }
             }
             val refs = hymn.references.entries.joinToString(" ") { "${it.key} ${it.value}" }
+            val normTitle = HymnRepository.removeDiacritics(hymn.title)
+            val normEng = HymnRepository.removeDiacritics(hymn.englishTitle)
+            val normRefs = HymnRepository.removeDiacritics(refs)
+            val normLyrics = HymnRepository.removeDiacritics(lyrics)
             SearchEntry(
                 hymn = hymn,
                 number = hymn.number.toString(),
-                title = HymnRepository.removeDiacritics(hymn.title),
-                englishTitle = HymnRepository.removeDiacritics(hymn.englishTitle),
-                refs = HymnRepository.removeDiacritics(refs),
-                lyrics = HymnRepository.removeDiacritics(lyrics),
+                title = normTitle, titleSpaceless = normTitle.replace(" ", ""),
+                englishTitle = normEng, englishTitleSpaceless = normEng.replace(" ", ""),
+                refs = normRefs, refsSpaceless = normRefs.replace(" ", ""),
+                lyrics = normLyrics, lyricsSpaceless = normLyrics.replace(" ", ""),
             )
+        }
+
+        fun matchQuality(text: String, textSp: String): Int {
+            if (text.contains(normalised)) return 2
+            if (textSp.contains(spaceless)) return 2
+            if (words.size > 1 && words.all { text.contains(it) || textSp.contains(it) }) return 1
+            return 0
         }
 
         val results = ArrayList<Pair<Hymn, Int>>()
@@ -102,10 +115,25 @@ class SearchScoringTest {
             var score = 0
             if (entry.number == normalised) score = 100
             else if (isDigits && entry.number.startsWith(normalised)) score = 90
-            if (entry.title.contains(normalised)) score = maxOf(score, 80)
-            if (entry.englishTitle.contains(normalised)) score = maxOf(score, 70)
-            if (entry.refs.contains(normalised)) score = maxOf(score, 60)
-            if (score == 0 && entry.lyrics.contains(normalised)) score = 40
+
+            val titleQ = matchQuality(entry.title, entry.titleSpaceless)
+            if (titleQ == 2) score = maxOf(score, 80)
+            else if (titleQ == 1) score = maxOf(score, 75)
+
+            val engQ = matchQuality(entry.englishTitle, entry.englishTitleSpaceless)
+            if (engQ == 2) score = maxOf(score, 70)
+            else if (engQ == 1) score = maxOf(score, 65)
+
+            val refsQ = matchQuality(entry.refs, entry.refsSpaceless)
+            if (refsQ == 2) score = maxOf(score, 60)
+            else if (refsQ == 1) score = maxOf(score, 55)
+
+            if (score == 0) {
+                val lyricsQ = matchQuality(entry.lyrics, entry.lyricsSpaceless)
+                if (lyricsQ == 2) score = 40
+                else if (lyricsQ == 1) score = 35
+            }
+
             if (score > 0) results.add(entry.hymn to score)
         }
 
@@ -211,5 +239,44 @@ class SearchScoringTest {
         val results = search("ohun oluwa", listOf(crHymn))
         assertEquals(1, results.size)
         assertEquals(200, results[0].number)
+    }
+
+    @Test
+    fun `all-words matching finds hymns with scattered query words`() {
+        val hymn = makeHymn(1, "Ẹ Máa Tẹ̀ Sí Wájú")
+        val results = search("e ma te", listOf(hymn))
+        assertEquals(1, results.size)
+        assertEquals(1, results[0].number)
+    }
+
+    @Test
+    fun `spaceless matching finds hymns despite space differences`() {
+        val hymn = makeHymn(1, "Ẹ Máa Tẹ̀ Síwájú")
+        val results = search("e maa te si waju", listOf(hymn))
+        assertEquals(1, results.size)
+    }
+
+    @Test
+    fun `exact title match ranks above word match`() {
+        val exact = makeHymn(10, "Oluwa Oba Ńlá")
+        val words = makeHymn(20, "Oba Oluwa Ni Ńlá", lyricsText = listOf("some text"))
+        val results = search("oluwa oba nla", listOf(exact, words))
+        assertEquals(10, results[0].number) // exact substring = 80
+        assertEquals(20, results[1].number) // all words = 75
+    }
+
+    @Test
+    fun `word match in title ranks above lyrics match`() {
+        val titleMatch = makeHymn(10, "Ẹ Máa Tẹ̀ Sí Wájú")
+        val lyricsMatch = makeHymn(20, "Other Title", lyricsText = listOf("Ẹ máa tẹ̀ sí wájú"))
+        val results = search("e ma te", listOf(titleMatch, lyricsMatch))
+        assertEquals(10, results[0].number) // title words = 75
+    }
+
+    @Test
+    fun `single word query does not trigger word matching`() {
+        // "ma" should only match via exact substring, not word splitting
+        val results = search("xyznotfound", hymns)
+        assertTrue(results.isEmpty())
     }
 }
