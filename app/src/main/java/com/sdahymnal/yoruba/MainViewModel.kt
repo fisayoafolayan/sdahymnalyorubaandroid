@@ -12,8 +12,8 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -98,12 +98,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private var searchTrackTimer: kotlinx.coroutines.Job? = null
 
-    val searchResults: StateFlow<List<Hymn>> = _searchQuery
-        .debounce(150)
-        .map { query ->
-            if (query.isBlank()) hymns else repository.search(query)
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), hymns)
+    val searchResults: StateFlow<List<Hymn>> = combine(
+        _searchQuery.debounce(150),
+        repository.state,
+    ) { query, state ->
+        val allHymns = (state as? HymnLoadState.Ready)?.hymns.orEmpty()
+        if (query.isBlank()) allHymns else repository.search(query)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
