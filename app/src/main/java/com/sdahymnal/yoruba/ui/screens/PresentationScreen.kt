@@ -245,19 +245,26 @@ fun PresentationScreen(
                     presFz = newFz
                     onFontSizeChange(newFz)
                 }) {
-                    Text("A\u2212", color = StageText, fontSize = 14.sp)
+                    Text("A\u2212", color = if (presFz <= 0.4f) StageText.copy(alpha = 0.3f) else StageText, fontSize = 14.sp)
                 }
-                Text(
-                    text = progressLabel,
-                    style = TextStyle(fontFamily = NotoSerif, fontSize = 12.sp),
-                    color = StageText.copy(alpha = 0.5f),
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = progressLabel,
+                        style = TextStyle(fontFamily = NotoSerif, fontSize = 12.sp),
+                        color = StageText.copy(alpha = 0.5f),
+                    )
+                    Text(
+                        text = "${"%.0f".format(presFz * 100)}%",
+                        style = TextStyle(fontFamily = NotoSerif, fontSize = 9.sp),
+                        color = StageText.copy(alpha = 0.3f),
+                    )
+                }
                 TextButton(onClick = {
                     val newFz = (presFz + 0.15f).coerceAtMost(2.5f)
                     presFz = newFz
                     onFontSizeChange(newFz)
                 }) {
-                    Text("A+", color = StageText, fontSize = 14.sp)
+                    Text("A+", color = if (presFz >= 2.5f) StageText.copy(alpha = 0.3f) else StageText, fontSize = 14.sp)
                 }
             }
 

@@ -92,17 +92,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val searchQuery: StateFlow<String> = _searchQuery
 
     private var searchTrackTimer: kotlinx.coroutines.Job? = null
+    private val _isSearchPending = MutableStateFlow(false)
+    val isSearching: StateFlow<Boolean> = _isSearchPending
+        .debounce { if (it) 300 else 0 }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     val searchResults: StateFlow<List<Hymn>> = combine(
         _searchQuery.debounce(150),
         repository.state,
     ) { query, state ->
         val allHymns = (state as? HymnLoadState.Ready)?.hymns.orEmpty()
-        if (query.isBlank()) allHymns else repository.search(query)
+        val results = if (query.isBlank()) allHymns else repository.search(query)
+        _isSearchPending.value = false
+        results
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
+        if (query.isNotBlank()) _isSearchPending.value = true
         // Track search after 1000ms of inactivity (matching web)
         searchTrackTimer?.cancel()
         if (query.isNotBlank()) {

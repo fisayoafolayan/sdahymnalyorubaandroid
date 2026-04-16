@@ -73,6 +73,7 @@ fun HymnNavGraph(
     val themeMode by viewModel.themeMode.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val searchResults by viewModel.searchResults.collectAsState()
+    val isSearching by viewModel.isSearching.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
     var selectedTab by rememberSaveable { mutableStateOf(BottomTab.Hymns) }
     var showNumberPad by rememberSaveable { mutableStateOf(false) }
@@ -182,6 +183,7 @@ fun HymnNavGraph(
                             selectedHymnNumber = selectedHymnNumber,
                             searchQuery = searchQuery,
                             searchResults = searchResults,
+                            isSearching = isSearching,
                             onSearchQueryChange = { viewModel.updateSearchQuery(it) },
                             onHymnClick = { hymn ->
                                 viewModel.selectHymn(hymn.number)
