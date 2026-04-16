@@ -132,8 +132,8 @@ fun PresentationScreen(
         is Slide.Title -> "Title"
         is Slide.End -> "End"
         is Slide.Lyrics -> {
-            val contentIndex = currentIndex  // 1-based since title is 0
-            val totalContent = slides.size - 2  // minus title and end
+            val contentIndex = currentIndex  // title is at 0, so first lyric is already 1
+            val totalContent = slides.size - 2  // exclude title and end slides
             "$contentIndex / $totalContent"
         }
     }
