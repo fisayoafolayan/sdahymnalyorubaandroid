@@ -35,11 +35,11 @@ import com.sdahymnal.yoruba.ui.theme.SelectedRowText
 fun HymnRow(
     hymn: Hymn,
     isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     isFavorite: Boolean = false,
     searchQuery: String = "",
     onFavoriteClick: (() -> Unit)? = null,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val titleColor = if (isSelected) SelectedRowText else MaterialTheme.colorScheme.onBackground
     val subtitleColor = if (isSelected) SelectedRowText.copy(alpha = 0.7f)
