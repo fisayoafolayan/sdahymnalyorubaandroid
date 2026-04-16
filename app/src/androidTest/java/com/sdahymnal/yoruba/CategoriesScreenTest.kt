@@ -1,0 +1,82 @@
+package com.sdahymnal.yoruba
+
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import com.sdahymnal.yoruba.ui.screens.CategoriesScreen
+import com.sdahymnal.yoruba.ui.theme.SDAHymnalTheme
+import org.junit.Rule
+import org.junit.Test
+
+class CategoriesScreenTest {
+
+    @get:Rule
+    val composeTestRule = createComposeRule()
+
+    private val testHymns = (1..40).map { makeTestHymn(it, "Hymn $it", "English $it") }
+
+    @Test
+    fun shows_categories_with_hymns() {
+        composeTestRule.setContent {
+            SDAHymnalTheme {
+                CategoriesScreen(
+                    hymns = testHymns,
+                    favorites = emptySet(),
+                    onCategoryClick = {},
+                )
+            }
+        }
+
+        // First category "Adoration and Praise" has hymns 1-38
+        composeTestRule.onNodeWithText("Adoration and Praise").assertIsDisplayed()
+    }
+
+    @Test
+    fun shows_hymn_count_on_card() {
+        composeTestRule.setContent {
+            SDAHymnalTheme {
+                CategoriesScreen(
+                    hymns = testHymns,
+                    favorites = emptySet(),
+                    onCategoryClick = {},
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("38 hymns").assertIsDisplayed()
+    }
+
+    @Test
+    fun shows_brand_header() {
+        composeTestRule.setContent {
+            SDAHymnalTheme {
+                CategoriesScreen(
+                    hymns = testHymns,
+                    favorites = emptySet(),
+                    onCategoryClick = {},
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("SDA Hymnal Yoruba").assertIsDisplayed()
+    }
+
+    @Test
+    fun hides_empty_categories() {
+        // Only hymns 1-5, so most categories should be hidden
+        val fewHymns = (1..5).map { makeTestHymn(it, "Hymn $it", "English $it") }
+
+        composeTestRule.setContent {
+            SDAHymnalTheme {
+                CategoriesScreen(
+                    hymns = fewHymns,
+                    favorites = emptySet(),
+                    onCategoryClick = {},
+                )
+            }
+        }
+
+        // "Morning Worship" needs hymns 39-45 - should not be shown
+        composeTestRule.onNodeWithText("Morning Worship").assertDoesNotExist()
+    }
+}

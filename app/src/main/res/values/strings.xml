@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SDA Hymnal Yorùbá</string>
+    <string name="search_placeholder">Search by title, number or lyrics\u2026</string>
+    <string name="hymn_count">%d hymns</string>
+
+    <!-- Network errors -->
+    <string name="error_no_internet">No internet connection. Please check your network and try again.</string>
+    <string name="error_timeout">Connection timed out. The server may be slow. Please try again.</string>
+    <string name="error_invalid_data">Received invalid data from the server. Please try again later.</string>
+    <string name="error_server">The server is experiencing issues. Please try again later.</string>
+    <string name="error_forbidden">Access denied. Please try again later.</string>
+    <string name="error_not_found">Hymn data not found on the server.</string>
+    <string name="error_http">Could not load hymns (error %d). Please try again.</string>
+    <string name="error_generic">Could not load hymns. Please check your internet connection and try again.</string>
+</resources>
