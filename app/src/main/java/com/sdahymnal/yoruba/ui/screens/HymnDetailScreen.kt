@@ -48,7 +48,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -107,6 +106,18 @@ fun HymnDetailScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(end = 4.dp),
                     ) {
+                        IconButton(onClick = onToggleFavorite) {
+                            Icon(
+                                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                                tint = if (isFavorite) {
+                                    com.sdahymnal.yoruba.ui.theme.FavoriteHeart
+                                } else {
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                },
+                                modifier = Modifier.size(22.dp),
+                            )
+                        }
                         Box(
                             modifier = Modifier
                                 .padding(horizontal = 4.dp)
@@ -184,11 +195,8 @@ fun HymnDetailScreen(
                 hymn = hymn,
                 isDark = isDark,
                 scaledFontSize = scaledFontSize,
-                isFavorite = isFavorite,
-                onToggleFavorite = onToggleFavorite,
                 onShare = onShare,
                 context = context,
-                view = LocalView.current,
             )
         }
     }
@@ -200,11 +208,8 @@ private fun HymnContent(
     hymn: Hymn,
     isDark: Boolean,
     scaledFontSize: androidx.compose.ui.unit.TextUnit,
-    isFavorite: Boolean,
-    onToggleFavorite: () -> Unit,
     onShare: () -> Unit,
     context: android.content.Context,
-    view: android.view.View,
 ) {
     val scrollState = rememberScrollState()
     val isLandscape = LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
@@ -276,58 +281,32 @@ private fun HymnContent(
             Spacer(modifier = Modifier.height(32.dp))
         }
 
-        // Favorite & share at the end of the hymn
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(vertical = 8.dp),
+        // Share at the end of the hymn
+        Box(
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .size(48.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .clickable {
+                    onShare()
+                    val url = "https://sdahymnalyoruba.com/?hymn=${hymn.number}"
+                    val sendIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, url)
+                        type = "text/plain"
+                    }
+                    context.startActivity(
+                        Intent.createChooser(sendIntent, "Share Hymn ${hymn.number}")
+                    )
+                },
+            contentAlignment = Alignment.Center,
         ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(24.dp))
-                    .clickable {
-                        view.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
-                        onToggleFavorite()
-                    },
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
-                    tint = if (isFavorite) {
-                        com.sdahymnal.yoruba.ui.theme.FavoriteHeart
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f)
-                    },
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(24.dp))
-                    .clickable {
-                        onShare()
-                        val url = "https://sdahymnalyoruba.com/?hymn=${hymn.number}"
-                        val sendIntent = Intent().apply {
-                            action = Intent.ACTION_SEND
-                            putExtra(Intent.EXTRA_TEXT, url)
-                            type = "text/plain"
-                        }
-                        context.startActivity(
-                            Intent.createChooser(sendIntent, "Share Hymn ${hymn.number}")
-                        )
-                    },
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Share,
-                    contentDescription = "Share",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f),
-                    modifier = Modifier.size(22.dp),
-                )
-            }
+            Icon(
+                imageVector = Icons.Outlined.Share,
+                contentDescription = "Share",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f),
+                modifier = Modifier.size(22.dp),
+            )
         }
 
         Spacer(modifier = Modifier.height(32.dp))
