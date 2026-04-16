@@ -102,7 +102,7 @@ fun MoreScreen(
             },
             text = {
                 Text(
-                    "Remove all $favoritesCount hymns from your favorites?",
+                    "This will remove all $favoritesCount hymns from your favorites.",
                     style = MaterialTheme.typography.bodyMedium,
                 )
             },
