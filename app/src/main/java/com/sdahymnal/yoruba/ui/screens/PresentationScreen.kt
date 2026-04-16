@@ -1,6 +1,5 @@
 package com.sdahymnal.yoruba.ui.screens
 
-import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -56,6 +55,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.sdahymnal.yoruba.data.Hymn
+import com.sdahymnal.yoruba.ui.theme.findActivity
 import com.sdahymnal.yoruba.ui.theme.NotoSerif
 import com.sdahymnal.yoruba.ui.theme.PlayfairDisplay
 import com.sdahymnal.yoruba.ui.theme.PurpleLight
@@ -83,8 +83,9 @@ fun PresentationScreen(
     val view = LocalView.current
     val screenWidth = LocalConfiguration.current.screenWidthDp
 
+    val activity = view.context.findActivity()
     DisposableEffect(Unit) {
-        val window = (view.context as Activity).window
+        val window = activity?.window ?: return@DisposableEffect onDispose {}
         val controller = WindowCompat.getInsetsController(window, view)
         controller.hide(WindowInsetsCompat.Type.systemBars())
         controller.systemBarsBehavior =
