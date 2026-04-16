@@ -31,8 +31,9 @@ class HymnRepository(private val context: Context, private val preferences: Pref
     private val _state = MutableStateFlow<HymnLoadState>(HymnLoadState.Loading)
     val state: StateFlow<HymnLoadState> = _state
 
-    // Pre-built search index
+    // Pre-built search index and number lookup
     private var searchIndex: List<SearchEntry> = emptyList()
+    private var hymnsByNumber: Map<Int, Hymn> = emptyMap()
 
     val hymns: List<Hymn>
         get() = (_state.value as? HymnLoadState.Ready)?.hymns.orEmpty()
@@ -42,6 +43,7 @@ class HymnRepository(private val context: Context, private val preferences: Pref
         if (cached != null) {
             _state.value = HymnLoadState.Ready(cached)
             searchIndex = buildIndex(cached)
+            hymnsByNumber = cached.associateBy { it.number }
         } else {
             _state.value = HymnLoadState.Loading
         }
@@ -51,6 +53,7 @@ class HymnRepository(private val context: Context, private val preferences: Pref
             if (fresh != null) {
                 _state.value = HymnLoadState.Ready(fresh)
                 searchIndex = buildIndex(fresh)
+                hymnsByNumber = fresh.associateBy { it.number }
             }
         } catch (e: Exception) {
             if (cached == null) {
@@ -91,7 +94,7 @@ class HymnRepository(private val context: Context, private val preferences: Pref
         return results.map { it.first }
     }
 
-    fun getByNumber(number: Int): Hymn? = hymns.find { it.number == number }
+    fun getByNumber(number: Int): Hymn? = hymnsByNumber[number]
 
     private fun buildIndex(hymns: List<Hymn>): List<SearchEntry> = hymns.map { hymn ->
         val lyrics = hymn.lyrics.joinToString(" ") { block ->
