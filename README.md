@@ -2,6 +2,42 @@
 
 The official Android companion app for [sdahymnalyoruba.com](https://sdahymnalyoruba.com). Browse, search, and present Seventh-day Adventist hymns in Yoruba.
 
+## Screenshots
+
+<table align="center">
+  <tr>
+    <td align="center"><strong>Light</strong></td>
+    <td align="center"><strong>Dark</strong></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/hymn-list-light.png" alt="Hymn list in light mode" width="250"></td>
+    <td align="center"><img src="screenshots/hymn-list-dark.png" alt="Hymn list in dark mode" width="250"></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/hymn-detail-light.png" alt="Hymn detail in light mode" width="250"></td>
+    <td align="center"><img src="screenshots/hymn-detail-dark.png" alt="Hymn detail in dark mode" width="250"></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/categories-light.png" alt="Categories in light mode" width="250"></td>
+    <td align="center"><img src="screenshots/categories-dark.png" alt="Categories in dark mode" width="250"></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/favorites-light.png" alt="Favorites in light mode" width="250"></td>
+    <td align="center"><img src="screenshots/favorites-dark.png" alt="Favorites in dark mode" width="250"></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/settings-light.png" alt="Settings in light mode" width="250"></td>
+    <td align="center"><img src="screenshots/settings-dark.png" alt="Settings in dark mode" width="250"></td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2"><strong>Presentation Mode</strong></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/presentation-title.png" alt="Presentation title slide" width="250"></td>
+    <td align="center"><img src="screenshots/presentation-lyrics.png" alt="Presentation lyrics slide" width="250"></td>
+  </tr>
+</table>
+
 ## Features
 
 - **620+ hymns** with Yoruba lyrics, English titles, and cross-references (SDAH, NAH, CH)

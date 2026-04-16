@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
 
     private fun parseHymnFromIntent(intent: Intent?): Int {
         val uri = intent?.data ?: return -1
-        return uri.getQueryParameter("hymn")?.toIntOrNull() ?: -1
+        val number = uri.getQueryParameter("hymn")?.toIntOrNull() ?: return -1
+        return if (number > 0) number else -1
     }
 }
