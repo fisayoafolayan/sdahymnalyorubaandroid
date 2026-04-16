@@ -2,6 +2,8 @@ package com.sdahymnal.yoruba.ui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -111,11 +113,16 @@ fun PresentationScreen(
 
     var currentIndex by remember { mutableIntStateOf(0) }
     var presFz by remember { mutableFloatStateOf(fontSizeMultiplier) }
+    val animatedFz by animateFloatAsState(
+        targetValue = presFz,
+        animationSpec = tween(durationMillis = 150),
+        label = "fontSize",
+    )
     val slide = slides[currentIndex]
 
     // Responsive base size: 3.8% of screen width, clamped 18-52
     val basePx = (screenWidth * 0.038f).coerceIn(18f, 52f)
-    val scaledSize = (basePx * presFz).sp
+    val scaledSize = (basePx * animatedFz).sp
 
     val isChorus = slide is Slide.Lyrics && slide.block.type == "chorus"
     val bgColor = if (isChorus) StageBgChorus else StageBgVerse
