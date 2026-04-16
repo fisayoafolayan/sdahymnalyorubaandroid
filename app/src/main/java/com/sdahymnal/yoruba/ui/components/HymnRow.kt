@@ -121,29 +121,43 @@ private fun highlightText(
         return@buildAnnotatedString
     }
 
-    val normalizedText = HymnRepository.removeDiacritics(text)
     val normalizedQuery = HymnRepository.removeDiacritics(query.trim())
     if (normalizedQuery.isEmpty()) {
         withStyle(SpanStyle(color = baseColor)) { append(text) }
         return@buildAnnotatedString
     }
 
-    val matchIndex = normalizedText.indexOf(normalizedQuery)
+    // Normalize each original character individually and track which
+    // original index each normalized character came from. This handles
+    // diacritics correctly: "Ọ̀" normalizes to "o" but we remember it
+    // came from the original character at that position.
+    val normalized = StringBuilder()
+    val toOriginal = mutableListOf<Int>()
+    for (i in text.indices) {
+        val charNormalized = HymnRepository.removeDiacritics(text[i].toString())
+        for (c in charNormalized) {
+            toOriginal.add(i)
+            normalized.append(c)
+        }
+    }
+
+    val matchIndex = normalized.indexOf(normalizedQuery)
     if (matchIndex < 0) {
         withStyle(SpanStyle(color = baseColor)) { append(text) }
         return@buildAnnotatedString
     }
 
-    // Map normalized index back to original text
-    // Since removeDiacritics can change string length, we approximate
-    // by finding the match range in the original string
-    val matchEnd = (matchIndex + normalizedQuery.length).coerceAtMost(text.length)
-    val safeStart = matchIndex.coerceAtMost(text.length)
-    val safeEnd = matchEnd.coerceAtMost(text.length)
-
-    withStyle(SpanStyle(color = baseColor)) { append(text.substring(0, safeStart)) }
-    withStyle(SpanStyle(color = highlightColor, fontWeight = FontWeight.Bold)) {
-        append(text.substring(safeStart, safeEnd))
+    val matchEndNorm = matchIndex + normalizedQuery.length
+    val originalStart = toOriginal[matchIndex]
+    val originalEnd = if (matchEndNorm < toOriginal.size) {
+        toOriginal[matchEndNorm]
+    } else {
+        text.length
     }
-    withStyle(SpanStyle(color = baseColor)) { append(text.substring(safeEnd)) }
+
+    withStyle(SpanStyle(color = baseColor)) { append(text.substring(0, originalStart)) }
+    withStyle(SpanStyle(color = highlightColor, fontWeight = FontWeight.Bold)) {
+        append(text.substring(originalStart, originalEnd))
+    }
+    withStyle(SpanStyle(color = baseColor)) { append(text.substring(originalEnd)) }
 }
