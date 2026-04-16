@@ -1,10 +1,6 @@
 package com.sdahymnal.yoruba.ui.screens
 
 import android.content.Intent
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,8 +40,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,8 +80,6 @@ fun HymnDetailScreen(
 
     val baseFontSize = 17.sp
     val scaledFontSize = baseFontSize * readingFontSize
-
-    var swipeDirection by remember { mutableIntStateOf(1) }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -176,10 +168,8 @@ fun HymnDetailScreen(
                     detectHorizontalDragGestures(
                         onDragEnd = {
                             if (totalDrag < -60 && hasNext) {
-                                swipeDirection = 1
                                 onNext()
                             } else if (totalDrag > 60 && hasPrevious) {
-                                swipeDirection = -1
                                 onPrevious()
                             }
                             totalDrag = 0f
@@ -189,24 +179,15 @@ fun HymnDetailScreen(
                     )
                 },
         ) {
-            AnimatedContent(
-                targetState = hymn.number,
-                transitionSpec = {
-                    slideInHorizontally { fullWidth -> swipeDirection * fullWidth } togetherWith
-                        slideOutHorizontally { fullWidth -> -swipeDirection * fullWidth }
-                },
-                label = "hymn_swipe",
-            ) { _ ->
-                HymnContent(
-                    hymn = hymn,
-                    isDark = isDark,
-                    scaledFontSize = scaledFontSize,
-                    isFavorite = isFavorite,
-                    onToggleFavorite = onToggleFavorite,
-                    context = context,
-                    view = LocalView.current,
-                )
-            }
+            HymnContent(
+                hymn = hymn,
+                isDark = isDark,
+                scaledFontSize = scaledFontSize,
+                isFavorite = isFavorite,
+                onToggleFavorite = onToggleFavorite,
+                context = context,
+                view = LocalView.current,
+            )
         }
     }
 }
