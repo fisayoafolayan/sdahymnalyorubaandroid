@@ -68,7 +68,7 @@ class FavoritesScreenTest {
     }
 
     @Test
-    fun hides_count_when_seven_or_fewer() {
+    fun shows_count_for_any_number_of_favorites() {
         val favorites = (1..5).map { makeTestHymn(it, "Hymn $it", "English $it") }
 
         composeTestRule.setContent {
@@ -81,7 +81,7 @@ class FavoritesScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText("5 hymns").assertDoesNotExist()
+        composeTestRule.onNodeWithText("5 hymns").assertIsDisplayed()
     }
 
     @Test
@@ -96,6 +96,6 @@ class FavoritesScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText("SDA Hymnal Yoruba").assertIsDisplayed()
+        composeTestRule.onNodeWithText("SDA Hymnal Yorùbá").assertIsDisplayed()
     }
 }

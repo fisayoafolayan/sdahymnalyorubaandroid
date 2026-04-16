@@ -58,7 +58,7 @@ class CategoriesScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText("SDA Hymnal Yoruba").assertIsDisplayed()
+        composeTestRule.onNodeWithText("SDA Hymnal Yorùbá").assertIsDisplayed()
     }
 
     @Test

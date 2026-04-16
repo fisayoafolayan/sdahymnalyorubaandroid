@@ -27,10 +27,9 @@ class HymnListScreenTest {
         composeTestRule.setContent {
             SDAHymnalTheme {
                 HymnListScreen(
-                    hymns = testHymns,
+                    displayedHymns = testHymns,
                     selectedHymnNumber = null,
                     searchQuery = "",
-                    searchResults = testHymns,
                     onSearchQueryChange = {},
                     onHymnClick = {},
                 )
@@ -47,10 +46,9 @@ class HymnListScreenTest {
         composeTestRule.setContent {
             SDAHymnalTheme {
                 HymnListScreen(
-                    hymns = testHymns,
+                    displayedHymns = testHymns,
                     selectedHymnNumber = null,
                     searchQuery = "",
-                    searchResults = testHymns,
                     onSearchQueryChange = {},
                     onHymnClick = {},
                 )
@@ -65,17 +63,16 @@ class HymnListScreenTest {
         composeTestRule.setContent {
             SDAHymnalTheme {
                 HymnListScreen(
-                    hymns = testHymns,
+                    displayedHymns = testHymns,
                     selectedHymnNumber = null,
                     searchQuery = "",
-                    searchResults = testHymns,
                     onSearchQueryChange = {},
                     onHymnClick = {},
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("SDA Hymnal Yoruba").assertIsDisplayed()
+        composeTestRule.onNodeWithText("SDA Hymnal Yorùbá").assertIsDisplayed()
     }
 
     @Test
@@ -85,10 +82,9 @@ class HymnListScreenTest {
         composeTestRule.setContent {
             SDAHymnalTheme {
                 HymnListScreen(
-                    hymns = testHymns,
+                    displayedHymns = testHymns,
                     selectedHymnNumber = null,
                     searchQuery = "",
-                    searchResults = testHymns,
                     onSearchQueryChange = {},
                     onHymnClick = { clickedHymn = it },
                 )
@@ -106,10 +102,9 @@ class HymnListScreenTest {
         composeTestRule.setContent {
             SDAHymnalTheme {
                 HymnListScreen(
-                    hymns = testHymns,
+                    displayedHymns = filtered,
                     selectedHymnNumber = null,
                     searchQuery = "Oluwa",
-                    searchResults = filtered,
                     onSearchQueryChange = {},
                     onHymnClick = {},
                 )

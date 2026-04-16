@@ -22,7 +22,7 @@ class MoreScreenTest {
                     themeMode = "system",
                     hymnCount = 621,
                     favoritesCount = 5,
-                    onToggleTheme = {},
+                    onSetTheme = {},
                 )
             }
         }
@@ -39,7 +39,7 @@ class MoreScreenTest {
             SDAHymnalTheme {
                 MoreScreen(
                     themeMode = "dark",
-                    onToggleTheme = {},
+                    onSetTheme = {},
                 )
             }
         }
@@ -54,7 +54,7 @@ class MoreScreenTest {
                 MoreScreen(
                     themeMode = "system",
                     hymnCount = 621,
-                    onToggleTheme = {},
+                    onSetTheme = {},
                 )
             }
         }
@@ -69,7 +69,7 @@ class MoreScreenTest {
                 MoreScreen(
                     themeMode = "system",
                     favoritesCount = 12,
-                    onToggleTheme = {},
+                    onSetTheme = {},
                 )
             }
         }
@@ -84,7 +84,7 @@ class MoreScreenTest {
                 MoreScreen(
                     themeMode = "system",
                     favoritesCount = 5,
-                    onToggleTheme = {},
+                    onSetTheme = {},
                 )
             }
         }
@@ -99,7 +99,7 @@ class MoreScreenTest {
                 MoreScreen(
                     themeMode = "system",
                     favoritesCount = 0,
-                    onToggleTheme = {},
+                    onSetTheme = {},
                 )
             }
         }
@@ -114,7 +114,7 @@ class MoreScreenTest {
                 MoreScreen(
                     themeMode = "system",
                     readingFontSize = 1.2f,
-                    onToggleTheme = {},
+                    onSetTheme = {},
                 )
             }
         }
@@ -129,13 +129,13 @@ class MoreScreenTest {
                 MoreScreen(
                     themeMode = "system",
                     favoritesCount = 3,
-                    onToggleTheme = {},
+                    onSetTheme = {},
                 )
             }
         }
 
         composeTestRule.onNodeWithText("Clear Favorites").performClick()
-        composeTestRule.onNodeWithText("Remove all 3 hymns from your favorites?").assertIsDisplayed()
+        composeTestRule.onNodeWithText("This will remove all 3 hymns from your favorites.").assertIsDisplayed()
     }
 
     @Test
@@ -144,11 +144,11 @@ class MoreScreenTest {
             SDAHymnalTheme {
                 MoreScreen(
                     themeMode = "system",
-                    onToggleTheme = {},
+                    onSetTheme = {},
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("SDA Hymnal Yoruba").assertIsDisplayed()
+        composeTestRule.onNodeWithText("SDA Hymnal Yorùbá").assertIsDisplayed()
     }
 }
