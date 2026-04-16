@@ -4,7 +4,6 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
 import com.sdahymnal.yoruba.data.Hymn
 import com.sdahymnal.yoruba.ui.screens.HymnListScreen
 import com.sdahymnal.yoruba.ui.theme.SDAHymnalTheme

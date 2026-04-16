@@ -2,6 +2,7 @@ package com.sdahymnal.yoruba.data
 
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -138,9 +139,9 @@ class SearchEdgeCasesTest {
 
     @Test
     fun `number 0 does not crash`() {
+        // Should complete without exception
         val results = search("0", hymns)
-        // 0 is a digit, should try prefix match
-        assertTrue(results.isEmpty() || results.isNotEmpty())
+        assertNotNull(results)
     }
 
     @Test
