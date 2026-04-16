@@ -133,24 +133,24 @@ class HymnRepository(private val context: Context) {
             requestBuilder.header("If-None-Match", storedEtag)
         }
 
-        val response = client.newCall(requestBuilder.build()).execute()
-
-        when (response.code) {
-            304 -> {
-                // Not modified - cached data is still fresh
-                null
+        client.newCall(requestBuilder.build()).execute().use { response ->
+            when (response.code) {
+                304 -> {
+                    // Not modified - cached data is still fresh
+                    null
+                }
+                in 200..299 -> {
+                    val body = response.body?.string() ?: throw Exception("Empty response")
+                    val hymns = json.decodeFromString<List<Hymn>>(body).sortedBy { it.number }
+                    // Atomic write: temp file then rename, so a crash mid-write
+                    // can't corrupt the cache and break offline access
+                    cacheTempFile.writeText(body)
+                    cacheTempFile.renameTo(cacheFile)
+                    preferences.hymnsEtag = response.header("ETag")
+                    hymns
+                }
+                else -> throw Exception("HTTP ${response.code}")
             }
-            in 200..299 -> {
-                val body = response.body?.string() ?: throw Exception("Empty response")
-                val hymns = json.decodeFromString<List<Hymn>>(body).sortedBy { it.number }
-                // Atomic write: temp file then rename, so a crash mid-write
-                // can't corrupt the cache and break offline access
-                cacheTempFile.writeText(body)
-                cacheTempFile.renameTo(cacheFile)
-                preferences.hymnsEtag = response.header("ETag")
-                hymns
-            }
-            else -> throw Exception("HTTP ${response.code}")
         }
     }
 
