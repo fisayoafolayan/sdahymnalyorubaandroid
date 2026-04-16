@@ -27,8 +27,8 @@ class CategoriesScreenTest {
             }
         }
 
-        // First category "Adoration and Praise" has hymns 1-38
-        composeTestRule.onNodeWithText("Adoration and Praise").assertIsDisplayed()
+        // First category "Adoration And Praise" has range 1..22, all covered by test data
+        composeTestRule.onNodeWithText("Ìbà Àti Ìyìn").assertIsDisplayed()
     }
 
     @Test
@@ -43,7 +43,7 @@ class CategoriesScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText("38 hymns").assertIsDisplayed()
+        composeTestRule.onNodeWithText("22 hymns").assertIsDisplayed()
     }
 
     @Test
@@ -76,7 +76,7 @@ class CategoriesScreenTest {
             }
         }
 
-        // "Morning Worship" needs hymns 39-45 - should not be shown
-        composeTestRule.onNodeWithText("Morning Worship").assertDoesNotExist()
+        // "Morning Worship" needs hymns 23-33 - none in test data, should not be shown
+        composeTestRule.onNodeWithText("Ìsìn Òwúrọ̀").assertDoesNotExist()
     }
 }
