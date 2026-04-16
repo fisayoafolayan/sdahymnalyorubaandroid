@@ -72,6 +72,7 @@ fun HymnDetailScreen(
     onPrevious: () -> Unit,
     onNext: () -> Unit,
     onPresent: () -> Unit,
+    onShare: () -> Unit = {},
     readingFontSize: Float = 1.0f,
     onCycleReadingFontSize: () -> Unit = {},
 ) {
@@ -185,6 +186,7 @@ fun HymnDetailScreen(
                 scaledFontSize = scaledFontSize,
                 isFavorite = isFavorite,
                 onToggleFavorite = onToggleFavorite,
+                onShare = onShare,
                 context = context,
                 view = LocalView.current,
             )
@@ -200,6 +202,7 @@ private fun HymnContent(
     scaledFontSize: androidx.compose.ui.unit.TextUnit,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit,
+    onShare: () -> Unit,
     context: android.content.Context,
     view: android.view.View,
 ) {
@@ -305,7 +308,7 @@ private fun HymnContent(
                     .size(48.dp)
                     .clip(RoundedCornerShape(24.dp))
                     .clickable {
-                        com.sdahymnal.yoruba.data.Analytics.trackEvent("share_${hymn.number}")
+                        onShare()
                         val url = "https://sdahymnalyoruba.com/?hymn=${hymn.number}"
                         val sendIntent = Intent().apply {
                             action = Intent.ACTION_SEND

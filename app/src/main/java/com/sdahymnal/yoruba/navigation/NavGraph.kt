@@ -140,7 +140,7 @@ fun HymnNavGraph(
                     hymnExists = { viewModel.getByNumber(it) != null },
                     onGoToHymn = { number ->
                         showNumberPad = false
-                        com.sdahymnal.yoruba.data.Analytics.trackEvent("numpad_$number")
+                        viewModel.trackNumpad(number)
                         viewModel.selectHymn(number)
                         navController.navigate(Routes.hymnDetail(number))
                     },
@@ -180,7 +180,7 @@ fun HymnNavGraph(
                             hymns = hymns,
                             favorites = favorites,
                             onCategoryClick = { category ->
-                                com.sdahymnal.yoruba.data.Analytics.trackEvent("category_${category.id}")
+                                viewModel.trackCategory(category.id)
                                 navController.navigate(Routes.categoryDetail(category.id))
                             },
                         )
@@ -239,6 +239,7 @@ fun HymnNavGraph(
                             onToggleTheme = { viewModel.toggleTheme() },
                             onCycleReadingFontSize = { viewModel.cycleReadingFontSize() },
                             onClearFavorites = { viewModel.clearFavorites() },
+                            onTrackEvent = { viewModel.trackEvent(it) },
                         )
                     }
 
@@ -259,6 +260,7 @@ fun HymnNavGraph(
                             isFavorite = hymn.number in favorites,
                             onToggleFavorite = { viewModel.toggleFavorite(hymn.number) },
                             onBack = { navController.popBackStack() },
+                            onShare = { viewModel.trackShare(hymn.number) },
                             onPresent = {
                                 viewModel.trackPresentation(hymn.number)
                                 navController.navigate(Routes.presentation(hymn.number))

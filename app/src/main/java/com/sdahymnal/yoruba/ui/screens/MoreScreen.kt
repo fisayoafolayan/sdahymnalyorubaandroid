@@ -61,6 +61,7 @@ fun MoreScreen(
     onToggleTheme: () -> Unit,
     onCycleReadingFontSize: () -> Unit = {},
     onClearFavorites: () -> Unit = {},
+    onTrackEvent: (String) -> Unit = {},
 ) {
     val context = LocalContext.current
     var showClearDialog by remember { mutableStateOf(false) }
@@ -171,7 +172,7 @@ fun MoreScreen(
                 title = "Share App",
                 subtitle = "Tell others about SDA Hymnal Yoruba",
                 onClick = {
-                    com.sdahymnal.yoruba.data.Analytics.trackEvent("share_app")
+                    onTrackEvent("share_app")
                     val shareIntent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
                         putExtra(Intent.EXTRA_TEXT, "Check out SDA Hymnal Yoruba - Browse, search, and present Seventh-day Adventist hymns in Yoruba.\n\nhttps://sdahymnalyoruba.com")
@@ -184,7 +185,7 @@ fun MoreScreen(
                 title = "Rate this App",
                 subtitle = "Leave a review on the Play Store",
                 onClick = {
-                    com.sdahymnal.yoruba.data.Analytics.trackEvent("rate_app")
+                    onTrackEvent("rate_app")
                     try {
                         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${context.packageName}")))
                     } catch (_: Exception) {
