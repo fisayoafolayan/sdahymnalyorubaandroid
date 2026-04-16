@@ -122,10 +122,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         Analytics.trackEvent("presented_$hymnNumber")
     }
 
-    fun trackShare(hymnNumber: Int) {
-        Analytics.trackEvent("share_$hymnNumber")
-    }
-
     fun getByNumber(number: Int): Hymn? = repository.getByNumber(number)
 
     // --- Deep links ---
