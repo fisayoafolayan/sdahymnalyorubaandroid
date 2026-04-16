@@ -20,7 +20,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.unit.dp
+import com.sdahymnal.yoruba.R
 import com.sdahymnal.yoruba.data.Hymn
 import com.sdahymnal.yoruba.ui.components.BrandHeader
 import com.sdahymnal.yoruba.ui.components.HymnRow
@@ -79,7 +81,7 @@ fun FavoritesScreen(
             ) {
                 if (favoriteHymns.size > 7) {
                     Text(
-                        text = "${favoriteHymns.size} hymns",
+                        text = pluralStringResource(R.plurals.hymn_count, favoriteHymns.size, favoriteHymns.size),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),

@@ -36,9 +36,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sdahymnal.yoruba.R
 import com.sdahymnal.yoruba.data.Hymn
 import com.sdahymnal.yoruba.data.HymnCategory
 import com.sdahymnal.yoruba.data.HymnCategoryStore
@@ -312,7 +314,7 @@ private fun CategoryCard(
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "$count hymns",
+            text = pluralStringResource(R.plurals.hymn_count, count, count),
             style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
         )

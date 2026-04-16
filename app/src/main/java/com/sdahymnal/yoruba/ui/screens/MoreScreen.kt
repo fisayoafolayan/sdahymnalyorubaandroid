@@ -45,9 +45,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sdahymnal.yoruba.R
 import com.sdahymnal.yoruba.ui.components.BrandHeader
 import com.sdahymnal.yoruba.ui.theme.FavoriteHeart
 
@@ -153,7 +155,8 @@ fun MoreScreen(
             SettingsRow(
                 icon = Icons.Outlined.Favorite,
                 title = "Favorites",
-                subtitle = if (favoritesCount == 0) "No favorites" else "$favoritesCount hymns",
+                subtitle = if (favoritesCount == 0) "No favorites"
+                    else pluralStringResource(R.plurals.hymn_count, favoritesCount, favoritesCount),
             )
             if (favoritesCount > 0) {
                 SettingsRow(

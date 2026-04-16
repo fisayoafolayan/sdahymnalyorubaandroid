@@ -63,7 +63,6 @@ object Analytics {
                     .build()
                 client.newCall(request).execute().close()
             } catch (_: Exception) {
-                // Analytics should never crash the app
             }
         }
     }
