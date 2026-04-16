@@ -75,6 +75,10 @@ import com.sdahymnal.yoruba.ui.theme.StageLabelBg
 import com.sdahymnal.yoruba.ui.theme.StageLabelBorder
 import com.sdahymnal.yoruba.ui.theme.StageText
 
+private const val PRES_FZ_MIN = 0.4f
+private const val PRES_FZ_MAX = 2.5f
+private const val PRES_FZ_STEP = 0.15f
+
 private sealed class Slide {
     data class Title(val hymn: Hymn) : Slide()
     data class Lyrics(val block: com.sdahymnal.yoruba.data.LyricBlock) : Slide()
@@ -241,11 +245,11 @@ fun PresentationScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 TextButton(onClick = {
-                    val newFz = (presFz - 0.15f).coerceAtLeast(0.4f)
+                    val newFz = (presFz - PRES_FZ_STEP).coerceAtLeast(PRES_FZ_MIN)
                     presFz = newFz
                     onFontSizeChange(newFz)
                 }) {
-                    Text("A\u2212", color = if (presFz <= 0.4f) StageText.copy(alpha = 0.3f) else StageText, fontSize = 14.sp)
+                    Text("A\u2212", color = if (presFz <= PRES_FZ_MIN) StageText.copy(alpha = 0.3f) else StageText, fontSize = 14.sp)
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
@@ -260,11 +264,11 @@ fun PresentationScreen(
                     )
                 }
                 TextButton(onClick = {
-                    val newFz = (presFz + 0.15f).coerceAtMost(2.5f)
+                    val newFz = (presFz + PRES_FZ_STEP).coerceAtMost(PRES_FZ_MAX)
                     presFz = newFz
                     onFontSizeChange(newFz)
                 }) {
-                    Text("A+", color = if (presFz >= 2.5f) StageText.copy(alpha = 0.3f) else StageText, fontSize = 14.sp)
+                    Text("A+", color = if (presFz >= PRES_FZ_MAX) StageText.copy(alpha = 0.3f) else StageText, fontSize = 14.sp)
                 }
             }
 
