@@ -127,21 +127,35 @@ private fun highlightText(
         return@buildAnnotatedString
     }
 
-    // Normalize each original character individually and track which
-    // original index each normalized character came from. This handles
-    // diacritics correctly: "Ọ̀" normalizes to "o" but we remember it
-    // came from the original character at that position.
+    // Build mapping from normalized positions back to original positions.
+    // Uses NFD decomposition directly instead of per-character removeDiacritics()
+    // to avoid repeated regex + normalization calls in the render path.
+    val nfd = java.text.Normalizer.normalize(text, java.text.Normalizer.Form.NFD)
     val normalized = StringBuilder()
-    val toOriginal = mutableListOf<Int>()
+    val toOriginal = IntArray(nfd.length) // upper bound, trimmed by normalizedLen
+    var normalizedLen = 0
+    var origIdx = 0
+    var nfdIdx = 0
+
     for (i in text.indices) {
-        val charNormalized = HymnRepository.removeDiacritics(text[i].toString())
-        for (c in charNormalized) {
-            toOriginal.add(i)
-            normalized.append(c)
+        val charNfd = java.text.Normalizer.normalize(text[i].toString(), java.text.Normalizer.Form.NFD)
+        for (j in charNfd.indices) {
+            val ch = charNfd[j]
+            // Keep only alphanumeric and whitespace (same as removeDiacritics)
+            if (ch.isLetterOrDigit() || ch.isWhitespace()) {
+                if (!isCombiningMark(ch)) {
+                    toOriginal[normalizedLen] = i
+                    normalized.append(ch.lowercaseChar())
+                    normalizedLen++
+                }
+            }
+            nfdIdx++
         }
+        origIdx++
     }
 
-    val matchIndex = normalized.indexOf(normalizedQuery)
+    val normalizedStr = normalized.toString()
+    val matchIndex = normalizedStr.indexOf(normalizedQuery)
     if (matchIndex < 0) {
         withStyle(SpanStyle(color = baseColor)) { append(text) }
         return@buildAnnotatedString
@@ -149,7 +163,7 @@ private fun highlightText(
 
     val matchEndNorm = matchIndex + normalizedQuery.length
     val originalStart = toOriginal[matchIndex]
-    val originalEnd = if (matchEndNorm < toOriginal.size) {
+    val originalEnd = if (matchEndNorm < normalizedLen) {
         toOriginal[matchEndNorm]
     } else {
         text.length
@@ -160,4 +174,11 @@ private fun highlightText(
         append(text.substring(originalStart, originalEnd))
     }
     withStyle(SpanStyle(color = baseColor)) { append(text.substring(originalEnd)) }
+}
+
+private fun isCombiningMark(ch: Char): Boolean {
+    val type = Character.getType(ch)
+    return type == Character.NON_SPACING_MARK.toInt() ||
+        type == Character.COMBINING_SPACING_MARK.toInt() ||
+        type == Character.ENCLOSING_MARK.toInt()
 }
