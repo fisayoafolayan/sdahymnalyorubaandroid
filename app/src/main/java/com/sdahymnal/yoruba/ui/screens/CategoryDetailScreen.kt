@@ -76,13 +76,11 @@ fun CategoryDetailScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                             )
                         }
-                        if (hymns.size > 7) {
-                            Text(
-                                text = pluralStringResource(R.plurals.hymn_count, hymns.size, hymns.size),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                            )
-                        }
+                        Text(
+                            text = pluralStringResource(R.plurals.hymn_count, hymns.size, hymns.size),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        )
                     }
                 }
             }
