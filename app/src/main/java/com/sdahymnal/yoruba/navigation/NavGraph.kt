@@ -156,7 +156,7 @@ fun HymnNavGraph(
             if (showNumberPad) {
                 NumberPadDialog(
                     onDismiss = { showNumberPad = false },
-                    hymnExists = { viewModel.getByNumber(it) != null },
+                    getHymnTitle = { viewModel.getByNumber(it)?.title },
                     onGoToHymn = { number ->
                         showNumberPad = false
                         viewModel.trackNumpad(number)

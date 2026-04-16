@@ -32,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import com.sdahymnal.yoruba.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -42,10 +43,11 @@ import com.sdahymnal.yoruba.ui.theme.PlayfairDisplay
 fun NumberPadDialog(
     onDismiss: () -> Unit,
     onGoToHymn: (Int) -> Unit,
-    hymnExists: (Int) -> Boolean = { true },
+    getHymnTitle: (Int) -> String? = { null },
 ) {
     var input by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
+    val previewTitle = input.toIntOrNull()?.let { getHymnTitle(it) }
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -116,7 +118,16 @@ fun NumberPadDialog(
                     }
                 }
 
-                if (showError) {
+                if (previewTitle != null) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = previewTitle,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                } else if (showError) {
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = stringResource(R.string.hymn_not_found),
@@ -130,7 +141,7 @@ fun NumberPadDialog(
                 val tryGo = {
                     val number = input.toIntOrNull()
                     if (number != null && number > 0) {
-                        if (hymnExists(number)) {
+                        if (getHymnTitle(number) != null) {
                             onGoToHymn(number)
                         } else {
                             showError = true
