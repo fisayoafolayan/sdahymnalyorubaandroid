@@ -157,10 +157,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { repository.load() }
     }
 
-    fun retry() {
-        viewModelScope.launch { repository.load() }
-    }
-
     // --- Restore state ---
     val lastHymn: Int get() = preferences.lastHymn
 

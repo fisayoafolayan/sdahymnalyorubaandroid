@@ -96,7 +96,7 @@ fun HymnNavGraph(
         is HymnLoadState.Loading -> LoadingScreen()
         is HymnLoadState.Error -> ErrorScreen(
             message = state.message,
-            onRetry = { viewModel.retry() },
+            onRetry = { viewModel.load() },
         )
         is HymnLoadState.Ready -> {
             val hymns = state.hymns
