@@ -14,6 +14,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -91,7 +95,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
-    private var searchTrackTimer: kotlinx.coroutines.Job? = null
     private val _isSearchPending = MutableStateFlow(false)
     val isSearching: StateFlow<Boolean> = _isSearchPending
         .debounce { if (it) 300 else 0 }
@@ -110,14 +113,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
         if (query.isNotBlank()) _isSearchPending.value = true
-        // Track search after 1000ms of inactivity (matching web)
-        searchTrackTimer?.cancel()
-        if (query.isNotBlank()) {
-            searchTrackTimer = viewModelScope.launch {
-                kotlinx.coroutines.delay(1000)
-                Analytics.trackEvent("search_${query.take(50)}")
-            }
-        }
+    }
+
+    // Track search after 1000ms of inactivity (matching web), race-free via Flow
+    init {
+        _searchQuery
+            .debounce(1000)
+            .map { it.trim().take(50) }
+            .filter { it.isNotBlank() }
+            .onEach { Analytics.trackEvent("search_$it") }
+            .launchIn(viewModelScope)
     }
 
     fun trackPresentation(hymnNumber: Int) {
