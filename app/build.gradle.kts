@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.sdahymnal.yoruba"
+    namespace = "com.sdahymnalyoruba"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.sdahymnal.yoruba"
+        applicationId = "com.sdahymnalyoruba"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

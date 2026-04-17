@@ -145,13 +145,13 @@ NavGraph                   - Routes screens, bottom nav, number pad FAB, page vi
 ### Writing New Tests
 
 **Unit tests:**
-- Place in `app/src/test/java/com/sdahymnal/yoruba/`
+- Place in `app/src/test/java/com/sdahymnalyoruba/`
 - Use JUnit 4 (`@Test`, `assertEquals`)
 - Focus on business logic (search, data parsing, preferences)
 - For flow-based patterns, use `kotlinx-coroutines-test` (`runTest`, `MutableStateFlow`)
 
 **UI tests:**
-- Place in `app/src/androidTest/java/com/sdahymnal/yoruba/`
+- Place in `app/src/androidTest/java/com/sdahymnalyoruba/`
 - Use Compose testing (`createComposeRule`, `onNodeWithText`, `performClick`)
 - Use `makeTestHymn()` from `TestHelpers.kt` to create test data
 - Each screen should have its own test file

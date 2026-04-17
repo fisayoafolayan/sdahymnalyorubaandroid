@@ -9,11 +9,11 @@
     kotlinx.serialization.KSerializer serializer(...);
 }
 
--keep,includedescriptorclasses class com.sdahymnal.yoruba.data.**$$serializer { *; }
--keepclassmembers class com.sdahymnal.yoruba.data.** {
+-keep,includedescriptorclasses class com.sdahymnalyoruba.data.**$$serializer { *; }
+-keepclassmembers class com.sdahymnalyoruba.data.** {
     *** Companion;
 }
--keepclasseswithmembers class com.sdahymnal.yoruba.data.** {
+-keepclasseswithmembers class com.sdahymnalyoruba.data.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
 

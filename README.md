@@ -81,7 +81,7 @@ analytics.hostname=your.hostname.com
 
 ```
 app/src/
-  main/java/com/sdahymnal/yoruba/
+  main/java/com/sdahymnalyoruba/
     MainActivity.kt              # Entry point, edge-to-edge, deep link handling
     MainViewModel.kt             # App state (theme, search, favorites, font sizes, analytics, deep links)
     data/
@@ -120,7 +120,7 @@ app/src/
     mipmap-*/                    # Launcher icons at all densities + monochrome
     values/                      # Colors, strings (localization-ready), themes, splash screen (v31)
     xml/                         # Backup rules, network security config
-  test/java/com/sdahymnal/yoruba/
+  test/java/com/sdahymnalyoruba/
     data/
       RemoveDiacriticsTest.kt    # Diacritics stripping, punctuation, edge cases
       HymnTest.kt                # JSON parsing: verses, chorus, call-response
@@ -130,7 +130,7 @@ app/src/
       ETagCachingTest.kt         # ETag logic + atomic file write tests
       PreferencesTest.kt         # Font sizes, favorites serialization
     ViewModelLogicTest.kt        # Flow patterns, deep links, search combine, hymn lookup
-  androidTest/java/com/sdahymnal/yoruba/
+  androidTest/java/com/sdahymnalyoruba/
     TestHelpers.kt               # Shared test hymn factory
     HymnListScreenTest.kt        # List display, count, search, click, brand header
     HymnDetailScreenTest.kt      # Title, English title, number, lyrics, references
