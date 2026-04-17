@@ -47,6 +47,7 @@ import com.sdahymnalyoruba.R
 import com.sdahymnalyoruba.data.Hymn
 import com.sdahymnalyoruba.data.HymnCategory
 import com.sdahymnalyoruba.data.HymnCategoryStore
+import com.sdahymnalyoruba.data.HymnRepository
 import com.sdahymnalyoruba.ui.components.BrandHeader
 
 private fun categoryIcon(iconKey: String): ImageVector = when (iconKey) {
@@ -160,10 +161,10 @@ fun CategoriesScreen(
     val filteredCategories = if (searchQuery.isBlank()) {
         allCategoriesWithCount
     } else {
-        val q = searchQuery.lowercase().trim()
+        val q = HymnRepository.removeDiacritics(searchQuery.trim())
         allCategoriesWithCount.filter {
-            it.first.name.lowercase().contains(q) ||
-                it.first.englishTitle.lowercase().contains(q)
+            HymnRepository.removeDiacritics(it.first.name).contains(q) ||
+                HymnRepository.removeDiacritics(it.first.englishTitle).contains(q)
         }
     }
 
