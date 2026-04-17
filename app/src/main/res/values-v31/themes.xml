@@ -2,6 +2,6 @@
 <resources>
     <style name="Theme.SDAHymnalYoruba" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowSplashScreenBackground">@color/splash_bg</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_splash</item>
     </style>
 </resources>
