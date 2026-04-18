@@ -11,6 +11,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 /**
@@ -69,6 +70,8 @@ object Analytics {
                     .header("User-Agent", USER_AGENT)
                     .build()
                 client.newCall(request).execute().close()
+            } catch (_: IOException) {
+                // Network failures for fire-and-forget telemetry are expected; don't report.
             } catch (e: Exception) {
                 Sentry.captureException(e)
             }
