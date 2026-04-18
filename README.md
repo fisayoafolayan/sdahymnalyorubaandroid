@@ -11,7 +11,7 @@ The official Android companion app for [sdahymnalyoruba.com](https://sdahymnalyo
 - **620+ hymns** with Yoruba lyrics, English titles, and cross-references (SDAH, NAH, CH)
 - **Live data** - fetches hymns from the web with ETag caching (no app update needed for hymn changes)
 - **Full-text search** - diacritics-insensitive, scored ranking (number > title > English > references > lyrics), 150ms debounce, search highlighting, empty state with guidance
-- **Presentation mode** - full-screen projection with slide-by-slide navigation, staggered line-by-line reveal, swipe/tap controls, adjustable font size with percentage indicator, landscape hint, keeps screen on
+- **Presentation mode** - full-screen projection with slide-by-slide navigation, staggered line-by-line reveal, swipe/tap controls, auto-hiding controls with tap-to-reveal, adjustable font size with percentage indicator, landscape hint, keeps screen on
 - **Categories** - 60+ hymn categories in a 2-column searchable grid with count labels
 - **Favorites** - mark hymns via top bar heart, browse in Favorites tab, undo snackbar on removal
 - **Number pad** - jump directly to any hymn number via floating keypad with live title preview and validation
@@ -39,6 +39,7 @@ The official Android companion app for [sdahymnalyoruba.com](https://sdahymnalyo
 - **Navigation Compose** for screen routing with animated transitions
 - **Playfair Display + Noto Serif** fonts (bundled TTFs)
 - **Umami** analytics (same dashboard as web app, configurable endpoint)
+- **AndroidX SplashScreen** compat library for seamless splash-to-content transition
 - **Sentry** for error reporting and ANR detection
 - **JUnit 4** for unit tests, **Compose UI Testing** for instrumentation tests
 
@@ -46,9 +47,9 @@ The official Android companion app for [sdahymnalyoruba.com](https://sdahymnalyo
 
 - Android Studio Hedgehog (2023.1) or later
 - JDK 17
-- Android SDK 35
+- Android SDK 36
 - Min SDK 26 (Android 8.0)
-- Kotlin 2.1+
+- Kotlin 2.3+
 
 ## Setup
 
@@ -82,7 +83,7 @@ analytics.hostname=your.hostname.com
 ```
 app/src/
   main/java/com/sdahymnalyoruba/
-    MainActivity.kt              # Entry point, edge-to-edge, deep link handling
+    MainActivity.kt              # Entry point, edge-to-edge, splash screen, deep link handling
     MainViewModel.kt             # App state (theme, search, favorites, font sizes, analytics, deep links)
     data/
       Hymn.kt                    # Data models (Hymn, LyricBlock, CallResponseLine)
@@ -92,12 +93,12 @@ app/src/
       Analytics.kt               # Umami client (configurable via BuildConfig, JSON-safe payloads)
       HttpClient.kt              # Shared OkHttpClient singleton (connection pool + dispatcher)
     navigation/
-      NavGraph.kt                # Screen routing, bottom nav, number pad FAB, page view tracking
+      NavGraph.kt                # Screen routing (HymnNavGraph, ReadyContent, AppScaffold, HymnNavHost), bottom nav, number pad FAB, page view tracking
     ui/
       theme/
         Color.kt                 # Color palette (light + dark, presentation, favorites)
         Type.kt                  # Typography (Playfair Display + Noto Serif)
-        Theme.kt                 # Material 3 color schemes, findActivity() helper
+        Theme.kt                 # Material 3 color schemes, findActivity() helper, SWIPE_THRESHOLD constant
       screens/
         HymnListScreen.kt        # Branded header, search with highlighting, empty state, loading indicator
         HymnDetailScreen.kt      # Hymn lyrics with swipe feedback, top bar favorite, share
@@ -109,7 +110,7 @@ app/src/
         LoadingScreen.kt         # Branded shimmer skeleton
         ErrorScreen.kt           # Offline error with retry
       components/
-        BrandHeader.kt           # Reusable branded header (book icon + title + subtitle)
+        BrandHeader.kt           # Reusable branded header (title + subtitle)
         SearchBar.kt             # Search input with clear button
         HymnRow.kt               # Hymn list item (number, title, subtitle, search highlight, favorite heart)
         BottomNavBar.kt          # Bottom navigation (Hymns, Categories, Favorites, More)
@@ -118,7 +119,7 @@ app/src/
     font/                        # Bundled Playfair Display + Noto Serif TTFs
     drawable/                    # Brand book icon (ic_book_brand)
     mipmap-*/                    # Launcher icons at all densities + monochrome
-    values/                      # Colors, strings (localization-ready), themes, splash screen (v31)
+    values/                      # Colors, strings (localization-ready), themes, splash screen
     xml/                         # Backup rules, network security config
   test/java/com/sdahymnalyoruba/
     data/

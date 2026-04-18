@@ -14,7 +14,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -108,7 +110,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val results = if (query.isBlank()) allHymns else repository.search(query)
         _isSearchPending.value = false
         results
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
@@ -175,11 +177,23 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { repository.load() }
     }
 
+    // --- App readiness (splash screen waits on this) ---
+    private val _appReady = MutableStateFlow(false)
+    val appReady: StateFlow<Boolean> = _appReady
+
     // --- Restore state ---
     val lastHymn: Int get() = preferences.lastHymn
 
     init {
         load()
         Analytics.trackEvent("app_launch")
+
+        // Signal app ready after data loads and search results are populated
+        viewModelScope.launch {
+            searchResults.first { it.isNotEmpty() }
+            // Allow Compose to draw the populated list
+            delay(50)
+            _appReady.value = true
+        }
     }
 }

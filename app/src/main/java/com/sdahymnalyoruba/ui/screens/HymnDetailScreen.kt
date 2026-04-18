@@ -64,6 +64,7 @@ import com.sdahymnalyoruba.data.Hymn
 import com.sdahymnalyoruba.data.LyricBlock
 import com.sdahymnalyoruba.ui.theme.ChorusBgDark
 import com.sdahymnalyoruba.ui.theme.ChorusBgLight
+import com.sdahymnalyoruba.ui.theme.SWIPE_THRESHOLD
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -199,8 +200,8 @@ fun HymnDetailScreen(
                         onDragStart = { dragOffset = 0f; totalDrag = 0f },
                         onDragEnd = {
                             when {
-                                totalDrag < -60 && hasNext -> onNext()
-                                totalDrag > 60 && hasPrevious -> onPrevious()
+                                totalDrag < -SWIPE_THRESHOLD && hasNext -> onNext()
+                                totalDrag > SWIPE_THRESHOLD && hasPrevious -> onPrevious()
                             }
                             dragOffset = 0f
                             totalDrag = 0f

@@ -16,7 +16,7 @@ Thank you for your interest in contributing! This guide will help you get starte
 
 - Android Studio Hedgehog (2023.1) or later
 - JDK 17
-- Android SDK 35
+- Android SDK 36
 - A device or emulator running Android 8.0+ (API 26+)
 
 ## Branch Naming
@@ -106,6 +106,9 @@ NavGraph                   - Routes screens, bottom nav, number pad FAB, page vi
 **Key patterns:**
 - State flows down from `MainViewModel` via `StateFlow` + `collectAsState()`
 - Events flow up via callback lambdas (e.g., `onHymnClick`, `onToggleFavorite`)
+- NavGraph is split into 4 composables: `HymnNavGraph`, `ReadyContent`, `AppScaffold`, `HymnNavHost`
+- Splash screen held via `SplashScreen.setKeepOnScreenCondition` until `searchResults` populate
+- Thread-safe search index via `AtomicReference`
 - No direct `Preferences`, `Repository`, or `Analytics` access from composables
 - All analytics routed through ViewModel methods
 - Search uses 150ms debounce via `Flow.debounce()` combined with `repository.state`
@@ -160,7 +163,7 @@ NavGraph                   - Routes screens, bottom nav, number pad FAB, page vi
 
 ### Good First Issues
 
-- Add **recently viewed** hymns list
+- Add **themed icon** support improvements for different launchers
 - Add **search history** with recent queries
 - Add unit tests for `HymnCategories` data
 - Add UI tests for `PresentationScreen` and `NumberPadDialog`

@@ -14,8 +14,8 @@ android {
         applicationId = "com.sdahymnalyoruba"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.0.0"
+        versionCode = (System.getenv("VERSION_CODE")?.toIntOrNull()) ?: 2
+        versionName = System.getenv("VERSION_NAME") ?: "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -28,7 +28,7 @@ android {
         // Inject Sentry DSN (keeps it out of version control)
         manifestPlaceholders["sentryDsn"] = props.getProperty("sentry.dsn", "")
 
-        // Analytics config — defaults can be overridden in local.properties
+        // Analytics config - defaults can be overridden in local.properties
         buildConfigField("String", "ANALYTICS_ENDPOINT",
             "\"${props.getProperty("analytics.endpoint", "https://analytics.afolayan.com/api/send")}\"")
         buildConfigField("String", "ANALYTICS_WEBSITE_ID",
@@ -100,6 +100,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.splashscreen)
     implementation(libs.sentry.android.core)
     debugImplementation(libs.androidx.ui.tooling)
     testImplementation(libs.junit)

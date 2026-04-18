@@ -232,28 +232,32 @@ fun MoreScreen(
 
             // ABOUT
             SectionHeader(stringResource(R.string.section_about))
+            val websiteUrl = stringResource(R.string.url_website)
+            val contactEmail = stringResource(R.string.url_contact_email)
+            val githubUrl = stringResource(R.string.url_github)
+            val privacyUrl = stringResource(R.string.url_privacy)
             SettingsRow(
                 icon = Icons.Outlined.Language,
                 title = stringResource(R.string.setting_website),
-                subtitle = "sdahymnalyoruba.com",
+                subtitle = stringResource(R.string.url_website_display),
                 onClick = {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, "https://sdahymnalyoruba.com".toUri()))
+                    context.startActivity(Intent(Intent.ACTION_VIEW, websiteUrl.toUri()))
                 },
             )
             SettingsRow(
                 icon = Icons.Outlined.Email,
                 title = stringResource(R.string.setting_contact),
-                subtitle = "support@sdahymnalyoruba.com",
+                subtitle = stringResource(R.string.url_contact_email),
                 onClick = {
-                    context.startActivity(Intent(Intent.ACTION_SENDTO, "mailto:support@sdahymnalyoruba.com".toUri()))
+                    context.startActivity(Intent(Intent.ACTION_SENDTO, "mailto:$contactEmail".toUri()))
                 },
             )
             SettingsRow(
                 icon = Icons.Outlined.Code,
                 title = stringResource(R.string.setting_github),
-                subtitle = "fisayoafolayan/sdahymnalyorubaandroid",
+                subtitle = stringResource(R.string.url_github_display),
                 onClick = {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, "https://github.com/fisayoafolayan/sdahymnalyorubaandroid".toUri()))
+                    context.startActivity(Intent(Intent.ACTION_VIEW, githubUrl.toUri()))
                 },
             )
             SettingsRow(
@@ -265,9 +269,9 @@ fun MoreScreen(
             SettingsRow(
                 icon = Icons.Outlined.Policy,
                 title = stringResource(R.string.setting_privacy),
-                subtitle = "sdahymnalyoruba.com/privacy",
+                subtitle = stringResource(R.string.url_privacy_display),
                 onClick = {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, "https://sdahymnalyoruba.com/privacy".toUri()))
+                    context.startActivity(Intent(Intent.ACTION_VIEW, privacyUrl.toUri()))
                 },
             )
 

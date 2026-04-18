@@ -134,11 +134,12 @@ class PresentationScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Title").assertIsDisplayed()
+        // Title slide is slide 1 of 4 (title + 2 verses + end)
+        composeTestRule.onNodeWithText("1 / 4").assertIsDisplayed()
 
         composeTestRule.onNodeWithContentDescription("Next slide").performClick()
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithText("1 / 2").assertIsDisplayed()
+        composeTestRule.onNodeWithText("2 / 4").assertIsDisplayed()
     }
 }

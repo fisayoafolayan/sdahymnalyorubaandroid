@@ -79,7 +79,7 @@ fun NumberPadDialog(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     // Balance spacer
-                    Spacer(modifier = Modifier.size(36.dp))
+                    Spacer(modifier = Modifier.size(48.dp))
                     Text(
                         text = input.ifEmpty { "\u2014" },
                         style = MaterialTheme.typography.headlineLarge.copy(
@@ -97,14 +97,14 @@ fun NumberPadDialog(
                     )
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(48.dp)
                             .clip(CircleShape)
-                            .clickable {
-                                if (input.isNotEmpty()) {
+                            .then(
+                                if (input.isNotEmpty()) Modifier.clickable {
                                     input = input.dropLast(1)
                                     showError = false
-                                }
-                            },
+                                } else Modifier
+                            ),
                         contentAlignment = Alignment.Center,
                     ) {
                         if (input.isNotEmpty()) {

@@ -76,7 +76,16 @@
     <string name="setting_github">GitHub</string>
     <string name="setting_version">Version</string>
     <string name="setting_privacy">Privacy Policy</string>
-    <string name="copyright_format">\u00A9 %d SDA Hymnal Yoruba</string>
+    <string name="copyright_format">\u00A9 %d SDA Hymnal Yorùbá</string>
+
+    <!-- URLs & external links -->
+    <string name="url_website">https://sdahymnalyoruba.com</string>
+    <string name="url_website_display">sdahymnalyoruba.com</string>
+    <string name="url_contact_email">support@sdahymnalyoruba.com</string>
+    <string name="url_github">https://github.com/fisayoafolayan/sdahymnalyorubaandroid</string>
+    <string name="url_github_display">fisayoafolayan/sdahymnalyorubaandroid</string>
+    <string name="url_privacy">https://sdahymnalyoruba.com/privacy</string>
+    <string name="url_privacy_display">sdahymnalyoruba.com/privacy</string>
 
     <!-- Network errors -->
     <string name="error_no_internet">No internet connection. Please check your network and try again.</string>

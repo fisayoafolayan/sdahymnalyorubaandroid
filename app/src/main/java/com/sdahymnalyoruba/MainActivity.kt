@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.sdahymnalyoruba.navigation.HymnNavGraph
 import com.sdahymnalyoruba.ui.theme.SDAHymnalTheme
@@ -17,8 +18,12 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Keep splash visible until app is fully ready (data loaded + UI settled)
+        splashScreen.setKeepOnScreenCondition { !viewModel.appReady.value }
 
         viewModel.setDeepLink(parseHymnFromIntent(intent))
 

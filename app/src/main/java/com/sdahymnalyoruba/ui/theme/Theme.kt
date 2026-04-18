@@ -12,6 +12,9 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+/** Minimum horizontal drag distance (px) to trigger swipe navigation. */
+const val SWIPE_THRESHOLD = 60f
+
 internal fun Context.findActivity(): Activity? {
     var ctx = this
     while (ctx is ContextWrapper) {

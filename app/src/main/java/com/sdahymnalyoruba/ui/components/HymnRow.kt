@@ -39,7 +39,7 @@ fun HymnRow(
     modifier: Modifier = Modifier,
     isFavorite: Boolean = false,
     searchQuery: String = "",
-    onFavoriteClick: (() -> Unit)? = null,
+    onToggleFavorite: (() -> Unit)? = null,
 ) {
     val titleColor = if (isSelected) SelectedRowText else MaterialTheme.colorScheme.onBackground
     val subtitleColor = if (isSelected) SelectedRowText.copy(alpha = 0.7f)
@@ -77,11 +77,11 @@ fun HymnRow(
                 )
             }
             if (isFavorite) {
-                if (onFavoriteClick != null) {
+                if (onToggleFavorite != null) {
                     Box(
                         modifier = Modifier
                             .size(40.dp)
-                            .clickable(onClick = onFavoriteClick),
+                            .clickable(onClick = onToggleFavorite),
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(

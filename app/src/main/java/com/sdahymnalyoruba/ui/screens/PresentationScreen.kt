@@ -8,7 +8,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -75,6 +77,7 @@ import com.sdahymnalyoruba.ui.theme.StageFooterBg
 import com.sdahymnalyoruba.ui.theme.StageLabelBg
 import com.sdahymnalyoruba.ui.theme.StageLabelBorder
 import com.sdahymnalyoruba.ui.theme.StageText
+import com.sdahymnalyoruba.ui.theme.SWIPE_THRESHOLD
 
 private const val PRES_FZ_MIN = 0.4f
 private const val PRES_FZ_MAX = 2.5f
@@ -124,6 +127,16 @@ fun PresentationScreen(
 
     var currentIndex by remember { mutableIntStateOf(0) }
     var presFz by remember { mutableFloatStateOf(fontSizeMultiplier) }
+    var controlsVisible by remember { mutableStateOf(true) }
+    var controlsTick by remember { mutableIntStateOf(0) }
+
+    // Auto-hide controls after 3 seconds of inactivity
+    LaunchedEffect(controlsTick) {
+        if (controlsVisible) {
+            kotlinx.coroutines.delay(3000)
+            controlsVisible = false
+        }
+    }
     val animatedFz by animateFloatAsState(
         targetValue = presFz,
         animationSpec = tween(durationMillis = 150),
@@ -138,16 +151,8 @@ fun PresentationScreen(
     val isChorus = slide is Slide.Lyrics && slide.block.type == "chorus"
     val bgColor = if (isChorus) StageBgChorus else StageBgVerse
 
-    // Progress label
-    val progressLabel = when (slide) {
-        is Slide.Title -> "Title"
-        is Slide.End -> "End"
-        is Slide.Lyrics -> {
-            val contentIndex = currentIndex  // title is at 0, so first lyric is already 1
-            val totalContent = slides.size - 2  // exclude title and end slides
-            "$contentIndex / $totalContent"
-        }
-    }
+    // Progress label: "1 / N" for all slides (title=1, end=N)
+    val progressLabel = "${currentIndex + 1} / ${slides.size}"
 
     Box(
         modifier = Modifier
@@ -155,15 +160,23 @@ fun PresentationScreen(
             .background(bgColor)
             .pointerInput(Unit) {
                 detectTapGestures {
-                    if (currentIndex < slides.size - 1) currentIndex++
+                    if (controlsVisible) {
+                        // When controls showing: tap advances slide + reset timer
+                        if (currentIndex < slides.size - 1) currentIndex++
+                        controlsTick++
+                    } else {
+                        // When controls hidden: tap anywhere shows them
+                        controlsVisible = true
+                        controlsTick++
+                    }
                 }
             }
             .pointerInput(Unit) {
                 var totalDrag = 0f
                 detectHorizontalDragGestures(
                     onDragEnd = {
-                        if (totalDrag < -60 && currentIndex < slides.size - 1) currentIndex++
-                        else if (totalDrag > 60 && currentIndex > 0) currentIndex--
+                        if (totalDrag < -SWIPE_THRESHOLD && currentIndex < slides.size - 1) currentIndex++
+                        else if (totalDrag > SWIPE_THRESHOLD && currentIndex > 0) currentIndex--
                         totalDrag = 0f
                     },
                     onDragCancel = { totalDrag = 0f },
@@ -223,11 +236,34 @@ fun PresentationScreen(
             }
         }
 
-        // Footer bar
+        // Subtle pill indicator when controls are hidden
+        AnimatedVisibility(
+            visible = !controlsVisible,
+            enter = fadeIn(tween(500)),
+            exit = fadeOut(tween(200)),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 8.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(32.dp)
+                    .height(4.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(StageText.copy(alpha = 0.2f)),
+            )
+        }
+
+        // Footer bar (auto-hides after 3s, tap to reveal)
+        AnimatedVisibility(
+            visible = controlsVisible,
+            enter = fadeIn() + slideInVertically { it },
+            exit = fadeOut() + slideOutVertically { it },
+            modifier = Modifier.align(Alignment.BottomCenter),
+        ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
                 .background(StageFooterBg)
                 .padding(horizontal = 12.dp, vertical = 8.dp),
         ) {
@@ -252,7 +288,7 @@ fun PresentationScreen(
                     presFz = newFz
                     onFontSizeChange(newFz)
                 }) {
-                    Text("A\u2212", color = if (presFz <= PRES_FZ_MIN) StageText.copy(alpha = 0.3f) else StageText, fontSize = 14.sp)
+                    Text("A\u2212", color = if (presFz <= PRES_FZ_MIN) StageText.copy(alpha = 0.5f) else StageText, fontSize = 14.sp)
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
@@ -263,7 +299,7 @@ fun PresentationScreen(
                     Text(
                         text = "${"%.0f".format(presFz * 100)}%",
                         style = TextStyle(fontFamily = NotoSerif, fontSize = 9.sp),
-                        color = StageText.copy(alpha = 0.3f),
+                        color = StageText.copy(alpha = 0.5f),
                     )
                 }
                 TextButton(onClick = {
@@ -271,7 +307,7 @@ fun PresentationScreen(
                     presFz = newFz
                     onFontSizeChange(newFz)
                 }) {
-                    Text("A+", color = if (presFz >= PRES_FZ_MAX) StageText.copy(alpha = 0.3f) else StageText, fontSize = 14.sp)
+                    Text("A+", color = if (presFz >= PRES_FZ_MAX) StageText.copy(alpha = 0.5f) else StageText, fontSize = 14.sp)
                 }
             }
 
@@ -281,25 +317,25 @@ fun PresentationScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(
-                    onClick = { if (currentIndex > 0) currentIndex-- },
+                    onClick = { if (currentIndex > 0) { currentIndex--; controlsTick++ } },
                     enabled = currentIndex > 0,
                     modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.NavigateBefore,
                         contentDescription = "Previous slide",
-                        tint = if (currentIndex > 0) StageText else StageText.copy(alpha = 0.3f),
+                        tint = if (currentIndex > 0) StageText else StageText.copy(alpha = 0.5f),
                     )
                 }
                 IconButton(
-                    onClick = { if (currentIndex < slides.size - 1) currentIndex++ },
+                    onClick = { if (currentIndex < slides.size - 1) { currentIndex++; controlsTick++ } },
                     enabled = currentIndex < slides.size - 1,
                     modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.NavigateNext,
                         contentDescription = "Next slide",
-                        tint = if (currentIndex < slides.size - 1) StageText else StageText.copy(alpha = 0.3f),
+                        tint = if (currentIndex < slides.size - 1) StageText else StageText.copy(alpha = 0.5f),
                     )
                 }
                 IconButton(
@@ -313,6 +349,7 @@ fun PresentationScreen(
                     )
                 }
             }
+        }
         }
     }
 }

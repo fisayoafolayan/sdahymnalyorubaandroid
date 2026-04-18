@@ -12,6 +12,7 @@ import java.io.File
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.text.Normalizer
+import java.util.concurrent.atomic.AtomicReference
 
 @androidx.compose.runtime.Stable
 sealed class HymnLoadState {
@@ -38,8 +39,7 @@ class HymnRepository(private val context: Context, private val preferences: Pref
         val byNumber: Map<Int, Hymn> = emptyMap(),
     )
 
-    @Volatile
-    private var index: HymnIndex = HymnIndex()
+    private val index = AtomicReference(HymnIndex())
 
     val hymns: List<Hymn>
         get() = (_state.value as? HymnLoadState.Ready)?.hymns.orEmpty()
@@ -48,7 +48,7 @@ class HymnRepository(private val context: Context, private val preferences: Pref
         val cached = loadFromCache()
         if (cached != null) {
             _state.value = HymnLoadState.Ready(cached)
-            index = HymnIndex(buildIndex(cached), cached.associateBy { it.number })
+            index.set(HymnIndex(buildIndex(cached), cached.associateBy { it.number }))
         } else {
             _state.value = HymnLoadState.Loading
         }
@@ -57,7 +57,7 @@ class HymnRepository(private val context: Context, private val preferences: Pref
             val fresh = fetchFromNetwork()
             if (fresh != null) {
                 _state.value = HymnLoadState.Ready(fresh)
-                index = HymnIndex(buildIndex(fresh), fresh.associateBy { it.number })
+                index.set(HymnIndex(buildIndex(fresh), fresh.associateBy { it.number }))
             }
         } catch (e: Exception) {
             if (cached == null) {
@@ -72,14 +72,14 @@ class HymnRepository(private val context: Context, private val preferences: Pref
         if (query.isBlank()) return hymns
 
         val normalised = removeDiacritics(query.trim())
-        if (normalised.isEmpty()) return hymns
+        if (normalised.isEmpty()) return emptyList()
 
         val isDigits = normalised.all { it.isDigit() }
         val words = normalised.split(' ').filter { it.isNotEmpty() }
         val spaceless = normalised.replace(" ", "")
 
         // Snapshot the index once so a concurrent swap can't affect this search
-        val entries = index.searchEntries
+        val entries = index.get().searchEntries
         val results = ArrayList<Pair<Hymn, Int>>(entries.size / 4)
 
         for (entry in entries) {
@@ -127,7 +127,7 @@ class HymnRepository(private val context: Context, private val preferences: Pref
         return 0
     }
 
-    fun getByNumber(number: Int): Hymn? = index.byNumber[number]
+    fun getByNumber(number: Int): Hymn? = index.get().byNumber[number]
 
     private fun buildIndex(hymns: List<Hymn>): List<SearchEntry> = hymns.map { hymn ->
         val lyrics = hymn.lyrics.joinToString(" ") { block ->
@@ -165,6 +165,9 @@ class HymnRepository(private val context: Context, private val preferences: Pref
             json.decodeFromString<List<Hymn>>(text).sortedBy { it.number }
         } catch (e: Exception) {
             io.sentry.Sentry.captureException(e)
+            // Delete corrupted cache so next load fetches fresh data
+            cacheFile.delete()
+            preferences.hymnsEtag = null
             null
         }
     }

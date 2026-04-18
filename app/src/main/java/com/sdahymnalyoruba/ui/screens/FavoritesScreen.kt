@@ -120,13 +120,13 @@ fun FavoritesScreen(
                             hymn = hymn,
                             isSelected = hymn.number == selectedHymnNumber,
                             isFavorite = true,
-                            onFavoriteClick = {
+                            onToggleFavorite = {
                                 onToggleFavorite(hymn.number)
                                 scope.launch {
                                     val result = snackbarHostState.showSnackbar(
                                         message = "\u201C${hymn.title}\u201D",
                                         actionLabel = undoLabel,
-                                        duration = SnackbarDuration.Short,
+                                        duration = SnackbarDuration.Long,
                                     )
                                     if (result == SnackbarResult.ActionPerformed) {
                                         onToggleFavorite(hymn.number)

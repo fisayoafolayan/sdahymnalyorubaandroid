@@ -4,4 +4,10 @@
         <item name="android:statusBarColor">@color/background_dark</item>
         <item name="android:navigationBarColor">@color/background_dark</item>
     </style>
+
+    <style name="Theme.SDAHymnalYoruba.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/background_dark</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.SDAHymnalYoruba</item>
+    </style>
 </resources>
