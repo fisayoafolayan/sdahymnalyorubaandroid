@@ -11,7 +11,7 @@ import com.sdahymnalyoruba.R
 
 val PlayfairDisplay = FontFamily(
     Font(R.font.playfair_display_regular, FontWeight.Normal),
-    Font(R.font.playfair_display_regular, FontWeight.Bold),
+    Font(R.font.playfair_display_bold, FontWeight.Bold),
     Font(R.font.playfair_display_italic, FontWeight.Normal, FontStyle.Italic),
     Font(R.font.playfair_display_italic, FontWeight.Bold, FontStyle.Italic),
 )
