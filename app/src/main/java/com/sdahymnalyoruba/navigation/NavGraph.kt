@@ -295,11 +295,15 @@ private fun HymnNavHost(
     modifier: Modifier = Modifier,
     initialHymn: Int = -1,
 ) {
-    val startDestination = if (initialHymn > 0) Routes.hymnDetail(initialHymn) else Routes.HYMN_LIST
+    LaunchedEffect(initialHymn) {
+        if (initialHymn > 0) {
+            navController.navigate(Routes.hymnDetail(initialHymn))
+        }
+    }
 
     NavHost(
         navController = navController,
-        startDestination = startDestination,
+        startDestination = Routes.HYMN_LIST,
         modifier = modifier,
         enterTransition = { fadeIn(tween(200)) + slideInHorizontally(tween(200)) { it / 6 } },
         exitTransition = { fadeOut(tween(150)) },

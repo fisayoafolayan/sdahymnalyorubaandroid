@@ -165,14 +165,16 @@ fun NumberPadDialog(
                         row.forEach { key ->
                             when (key) {
                                 "go" -> {
+                                    val active = input.isNotEmpty()
                                     Box(
                                         modifier = Modifier
                                             .size(64.dp)
-                                            .clip(CircleShape)
-                                            .then(
-                                                if (input.isNotEmpty()) Modifier.clickable { tryGo() }
-                                                else Modifier
-                                            ),
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(
+                                                if (active) MaterialTheme.colorScheme.primary
+                                                else MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                                            )
+                                            .then(if (active) Modifier.clickable { tryGo() } else Modifier),
                                         contentAlignment = Alignment.Center,
                                     ) {
                                         Text(
@@ -180,10 +182,10 @@ fun NumberPadDialog(
                                             fontFamily = NotoSerif,
                                             fontSize = 18.sp,
                                             fontWeight = FontWeight.Bold,
-                                            color = if (input.isNotEmpty()) {
-                                                MaterialTheme.colorScheme.primary
+                                            color = if (active) {
+                                                MaterialTheme.colorScheme.onPrimary
                                             } else {
-                                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                                                MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
                                             },
                                         )
                                     }
